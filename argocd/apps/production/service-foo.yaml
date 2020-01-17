@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: production--service-foo
+  namespace: argocd
+spec:
+  destination:
+    namespace: production
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: service-foo/kubernetes/overlays/production
+    repoURL: https://github.com/yuya-takeyama/monorepo
+    targetRevision: develop
