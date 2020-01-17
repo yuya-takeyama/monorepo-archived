@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: service-bar
+  name: service-bar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: service-bar
+  template:
+    metadata:
+      labels:
+        run: service-bar
+    spec:
+      containers:
+      - image: yuyat/service-bar
+        name: service-bar

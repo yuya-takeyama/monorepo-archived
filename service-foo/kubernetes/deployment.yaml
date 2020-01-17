@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: service-foo
+  name: service-foo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: service-foo
+  template:
+    metadata:
+      labels:
+        run: service-foo
+    spec:
+      containers:
+      - image: yuyat/service-foo
+        name: service-foo
