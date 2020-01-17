@@ -22,3 +22,19 @@ spec:
       containers:
       - image: yuyat/service-foo
         name: service-foo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-foo
+  name: service-foo
+spec:
+  ports:
+  - name: 80-4567
+    port: 80
+    protocol: TCP
+    targetPort: 4567
+  selector:
+    app: service-foo
+  type: ClusterIP
