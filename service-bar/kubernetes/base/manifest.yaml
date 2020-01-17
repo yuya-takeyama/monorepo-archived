@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: service-bar
+    app: service-bar
   name: service-bar
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: service-bar
+      app: service-bar
   template:
     metadata:
       labels:
-        run: service-bar
+        app: service-bar
     spec:
       containers:
       - image: yuyat/service-bar
