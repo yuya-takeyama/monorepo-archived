@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: develop--service-foo
+  namespace: argocd
+spec:
+  destination:
+    namespace: develop
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: service-foo/kubernetes/overlays/develop
+    repoURL: https://github.com/yuya-takeyama/monorepo
+    targetRevision: develop
