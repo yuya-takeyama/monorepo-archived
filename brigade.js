@@ -21,6 +21,17 @@ events.on('push', async (e, project) => {
 
   await kanikoCredentialLoader.run();
 
+  const buildDetector = new Job('build-detector');
+
+  buildDetector.image = 'alpine';
+
+  buildDetector.tasks = [
+    'find . -name Dockerfile | awk -F / \'{ print $2 }\'',
+  ];
+
+  const buildTargets = await buildDetector.run();
+  console.log(`buildTargets = ${buildTargets}`);
+
   const imageBuilder = new Job('image-builder');
 
   imageBuilder.image = 'gcr.io/kaniko-project/executor';
