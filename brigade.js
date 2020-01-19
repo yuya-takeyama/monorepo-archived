@@ -80,6 +80,7 @@ events.on('push', async (e, project) => {
 
       reorganizer.tasks = [
         `echo "${project.secrets.GIT_DEPLOY_KEY_BASE64}" > /tmp/id_rsa_base64`,
+        'mkdir -pv ~/.ssh',
         'cat /tmp/id_rsa_base64 | base64 -D > ~/.ssh/id_rsa',
         'chmod 400 ~/.ssh/id_rsa',
         'apk add --update bash git curl',
