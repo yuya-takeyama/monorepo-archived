@@ -38,6 +38,8 @@ events.on('push', async (e, project) => {
   const buildJobs = buildTargets.map((target) => {
     const imageBuilder = new Job(`build-${target}`);
 
+    imageBuilder.image = 'gcr.io/kaniko-project/executor';
+
     imageBuilder.storage.enabled = true;
     imageBuilder.storage.path = '/kaniko/.docker';
 
