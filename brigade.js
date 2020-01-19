@@ -76,7 +76,7 @@ events.on('push', async (e, project) => {
       `--destination=yuyat/${target}:${buildParams.imageTag}`,
     ];
 
-    return imageBuilder.then(() => {
+    return imageBuilder.run().then(() => {
       const reorganizer = new Job(`reorganize-${target}`, 'alpine');
 
       reorganizer.tasks = [
