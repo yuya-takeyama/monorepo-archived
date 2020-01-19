@@ -39,7 +39,7 @@ events.on('push', async (e, project) => {
   imageBuilder.image = 'gcr.io/kaniko-project/executor';
   imageBuilder.image = 'alpine';
 
-  image.tasks = [
+  imageBuilder.tasks = [
     'cat /kaniko/.docker/config.json',
   ];
 
