@@ -1,5 +1,22 @@
 const { events, Job, Group } = require('brigadier');
 
+const parseBuildParams = (event) => {
+  const branch = event.ref.split('/')[2];
+
+  if (branch === 'develop') {
+    imagePrefix = 'develop';
+  } else if (branch === 'master') {
+    imagePrefix = 'production';
+  } else {
+    throw new Error(`Unsupported ref: ${event.ref}`);
+  }
+
+  return {
+    overlay: imagePrefix,
+    imageTag: `${imagePrefix}.${event.commit}`,
+  };
+};
+
 const createKanikoCredentialLoaderJob = (credential) => {
   const kanikoCredentialLoader = new Job('kaniko-credential-loader', 'alpine');
 
@@ -42,6 +59,8 @@ events.on('push', async (e, project) => {
   const buildTargets = detectBuildsResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
+  const buildParams = parseBuildParams(e);
+
   const buildJobs = buildTargets.map((target) => {
     const imageBuilder = new Job(`build-${target}`);
 
@@ -53,11 +72,26 @@ events.on('push', async (e, project) => {
     imageBuilder.args = [
       `--context=/src/${target}`,
       `--dockerfile=/src/${target}/Dockerfile`,
-      `--destination=yuyat/${target}`,
+      `--destination=yuyat/${target}:${buildParams.imageTag}`,
     ];
 
-    return imageBuilder;
+    return imageBuilder.then(() => {
+      const reorganizer = new Job(`reorganize-${target}`, 'alpine');
+
+      reorganizer.tasks = [
+        'apk add --update bash git',
+        'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash',
+        'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
+        'cd /gitops-repo',
+        `mkdir -pv ${buildParams.overlay}/${target}`,
+        `kustomize build /src/${target}/kubernetes/overlays/${overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
+        'git add --all',
+        `git commit -m 'Update ${buildParams.imageTag}'`
+      ];
+
+      return reorganizer.run();
+    });
   });
 
-  await Group.runAll(buildJobs);
+  await new Group(buildJobs).runAll();
 });
