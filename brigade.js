@@ -49,6 +49,7 @@ events.on('push', async (e, project) => {
 
     return imageBuilder;
   });
+  console.dir(buildJobs);
 
   try {
     console.log('Running buildJobs');
