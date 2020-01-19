@@ -84,7 +84,7 @@ events.on('push', async (e, project) => {
         'cd /kustomize',
         'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | OSTYPE=linux-gnu bash',
         `cd /src/${target}/kubernetes/overlays/${buildParams.overlay}`,
-        `kustomize edit set image yuyat/${target}=yuyat/${buildParams.imageTag}`,
+        `/kustomize/kustomize edit set image yuyat/${target}=yuyat/${buildParams.imageTag}`,
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
