@@ -82,8 +82,9 @@ events.on('push', async (e, project) => {
         'apk add --update bash git curl',
         'mkdir /kustomize',
         'cd /kustomize',
-        'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | OSTYPE=linux-gnu bash -x',
-        'ls -lah',
+        'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | OSTYPE=linux-gnu bash',
+        `cd /src/${target}/kubernetes/overlays/${buildParams.overlay}`,
+        `kustomize edit set image yuyat/${target}=yuyat/${buildParams.imageTag}`,
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
@@ -93,6 +94,7 @@ events.on('push', async (e, project) => {
         `git config --global user.name "${project.secrets.GIT_USER_NAME}"`,
         'git add --all',
         `git commit -m 'Update ${buildParams.imageTag}'`,
+        'git push origin master',
       ];
 
       return reorganizer.run();
