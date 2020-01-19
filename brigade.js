@@ -21,18 +21,18 @@ events.on('push', async (e, project) => {
 
   await kanikoCredentialLoader.run();
 
-  const buildDetector = new Job('build-detector');
+  const detectBuilds = new Job('build-builds');
 
-  buildDetector.image = 'alpine';
+  detectBuilds.image = 'alpine';
 
-  buildDetector.tasks = [
+  detectBuilds.tasks = [
     'cd /src',
     'find . -name Dockerfile | awk -F / \'{ print $2 }\'',
   ];
 
-  const buildDetectorResult = await buildDetector.run();
+  const detectBuildsResult = await detectBuilds.run();
 
-  const buildTargets = buildDetectorResult.data.split('\n').filter((target) => target !== '');
+  const buildTargets = detectBuildsResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
   const buildJobs = buildTargets.map((target) => {
@@ -51,13 +51,6 @@ events.on('push', async (e, project) => {
 
     return imageBuilder;
   });
-  console.dir(buildJobs);
 
-  try {
-    console.log('Running buildJobs');
-    await Group.runAll(buildJobs);
-  } catch (err) {
-    console.log('Error!!!');
-    console.log('Error Message = ' + err.message);
-  }
+  await Group.runAll(buildJobs);
 });
