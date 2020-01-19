@@ -5,10 +5,8 @@ events.on('push', (e, p) => {
 
   imageBuilder.image = 'gcr.io/kaniko-project/executor';
 
-  imageBuilder.tasks = [
-    'cd /src',
-    'ls -lah',
-    'executor --help',
+  imageBuilder.args = [
+    '--help',
   ];
 
   imageBuilder.streamLogs = true;
