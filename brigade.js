@@ -84,6 +84,7 @@ events.on('push', async (e, project) => {
         'cat /tmp/id_rsa_base64 | base64 -d > ~/.ssh/id_rsa',
         'chmod 400 ~/.ssh/id_rsa',
         'cat ~/.ssh/id_rsa',
+        'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts',
         'apk add --update bash git curl openssh',
         'mkdir /kustomize',
         'cd /kustomize',
