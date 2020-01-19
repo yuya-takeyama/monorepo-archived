@@ -83,6 +83,7 @@ events.on('push', async (e, project) => {
         'mkdir -pv ~/.ssh',
         'cat /tmp/id_rsa_base64 | base64 -d > ~/.ssh/id_rsa',
         'chmod 400 ~/.ssh/id_rsa',
+        'cat ~/.ssh/id_rsa',
         'apk add --update bash git curl openssh',
         'mkdir /kustomize',
         'cd /kustomize',
