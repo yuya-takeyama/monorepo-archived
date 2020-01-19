@@ -1,9 +1,7 @@
 const { events, Job, Group } = require('brigadier');
 
-events.on('push', async (e, project) => {
-  const kanikoCredentialLoader = new Job('kaniko-credential-loader');
-
-  kanikoCredentialLoader.image = 'alpine';
+const createKanikoCredentialLoaderJob = (credential) => {
+  const kanikoCredentialLoader = new Job('kaniko-credential-loader', 'alpine');
 
   kanikoCredentialLoader.storage.enabled = true;
   kanikoCredentialLoader.storage.path = '/kaniko/.docker';
@@ -19,18 +17,27 @@ events.on('push', async (e, project) => {
     `echo '${JSON.stringify(auth)}' > /kaniko/.docker/config.json`,
   ];
 
-  await kanikoCredentialLoader.run();
+  return kanikoCredentialLoader;
+}
 
-  const detectBuilds = new Job('detect-builds');
-
-  detectBuilds.image = 'alpine';
+const createDetectBuildsJob = () => {
+  const detectBuilds = new Job('detect-builds', 'alpine');
 
   detectBuilds.tasks = [
     'cd /src',
     'find . -name Dockerfile | awk -F / \'{ print $2 }\'',
   ];
 
-  const detectBuildsResult = await detectBuilds.run();
+  return detectBuilds;
+};
+
+events.on('push', async (e, project) => {
+  const setupJobs = new Group([
+    createKanikoCredentialLoaderJob(project.secrets.DOCKER_CREDENTIAL),
+    createDetectBuildsJob(),
+  ]);
+
+  const [_, detectBuildsResult] = await group.runAll();
 
   const buildTargets = detectBuildsResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
@@ -52,6 +59,5 @@ events.on('push', async (e, project) => {
     return imageBuilder;
   });
 
-  const buildJobResults = await Group.runAll(buildJobs);
-  console.dir(buildJobResults);
+  await Group.runAll(buildJobs);
 });
