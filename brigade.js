@@ -5,18 +5,8 @@ events.on('push', async (e, project) => {
 
   kanikoCredentialLoader.image = 'alpine';
 
-  kanikoCredentialLoader.volumes = [
-    {
-      "name": "kaniko-credential-storage",
-      "emptyDir": {},
-    }
-  ];
-  kanikoCredentialLoader.volumeMounts = [
-    {
-      name: "kaniko-credential-storage",
-      mountPath: "/kaniko/.docker"
-    }
-  ];
+  kanikoCredentialLoader.storage.enabled = true;
+  kanikoCredentialLoader.storage.path = '/kaniko/.docker';
 
   const auth = {
     auths: {
@@ -43,6 +33,9 @@ events.on('push', async (e, project) => {
     'cat /kaniko/.docker/config.json',
   ];
 
+  imageBuilder.storage.enabled = true;
+  imageBuilder.storage.path = '/kaniko/.docker';
+
   /*
   imageBuilder.args = [
     '--cache',
@@ -51,13 +44,6 @@ events.on('push', async (e, project) => {
     '--destination=yuyat/service-foo',
   ];
   */
-
-  imageBuilder.volumeMounts = [
-    {
-      "name": "kaniko-credential-storage",
-      "mountPath": "/kaniko/.docker"
-    }
-  ];
 
   imageBuilder.streamLogs = true;
 
