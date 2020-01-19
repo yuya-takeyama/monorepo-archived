@@ -37,7 +37,7 @@ events.on('push', async (e, project) => {
     createDetectBuildsJob(),
   ]);
 
-  const [_, detectBuildsResult] = await group.runAll();
+  const [_, detectBuildsResult] = await setupJobs.runAll();
 
   const buildTargets = detectBuildsResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
