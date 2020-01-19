@@ -21,7 +21,7 @@ events.on('push', async (e, project) => {
 
   await kanikoCredentialLoader.run();
 
-  const detectBuilds = new Job('build-builds');
+  const detectBuilds = new Job('detect-builds');
 
   detectBuilds.image = 'alpine';
 
@@ -52,5 +52,6 @@ events.on('push', async (e, project) => {
     return imageBuilder;
   });
 
-  await Group.runAll(buildJobs);
+  const buildJobResults = await Group.runAll(buildJobs);
+  console.dir(buildJobResults);
 });
