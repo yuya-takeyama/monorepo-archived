@@ -79,7 +79,7 @@ events.on('push', async (e, project) => {
       const reorganizer = new Job(`reorganize-${target}`, 'alpine');
 
       reorganizer.tasks = [
-        'apk add --update bash git',
+        'apk add --update bash git curl',
         'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash',
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
