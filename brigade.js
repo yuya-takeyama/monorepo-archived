@@ -86,12 +86,12 @@ events.on('push', async (e, project) => {
         `mkdir -pv ${buildParams.overlay}/${target}`,
         `kustomize build /src/${target}/kubernetes/overlays/${overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
         'git add --all',
-        `git commit -m 'Update ${buildParams.imageTag}'`
+        `git commit -m 'Update ${buildParams.imageTag}'`,
       ];
 
       return reorganizer.run();
     });
   });
 
-  await new Group(buildJobs).runAll();
+  await Group(buildJobs).runAll(buildJobs);
 });
