@@ -26,6 +26,7 @@ events.on('push', async (e, project) => {
   buildDetector.image = 'alpine';
 
   buildDetector.tasks = [
+    'cd /src',
     'find . -name Dockerfile | awk -F / \'{ print $2 }\'',
   ];
 
