@@ -88,6 +88,9 @@ events.on('push', async (e, project) => {
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
         `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
+        `cat ${buildParams.overlay}/${target}/manifest.yaml`,
+        `git config --global user.email "${project.secrets.GIT_USER_EMAIL}"`,
+        `git config --global user.name "${project.secrets.GIT_USER_NAME}"`,
         'git add --all',
         `git commit -m 'Update ${buildParams.imageTag}'`,
       ];
