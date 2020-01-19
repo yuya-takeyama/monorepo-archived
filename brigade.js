@@ -35,7 +35,7 @@ events.on('push', async (e, project) => {
   console.log('buildTargets = %j', buildTargets);
 
   const buildJobs = buildTargets.map((target) => {
-    const imageBuilder = new Job(`image-builder:${target}`)
+    const imageBuilder = new Job(`build-${target}`)
 
     imageBuilder.storage.enabled = true;
     imageBuilder.storage.path = '/kaniko/.docker';
