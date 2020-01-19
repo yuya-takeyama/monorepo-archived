@@ -5,6 +5,8 @@ const parseBuildParams = (event) => {
 
   if (branch === 'develop') {
     imagePrefix = 'develop';
+  } else if (branch === 'release') {
+    imagePrefix = 'release';
   } else if (branch === 'master') {
     imagePrefix = 'production';
   } else {
@@ -99,7 +101,7 @@ events.on('push', async (e, project) => {
         `git config --global user.email "${project.secrets.GIT_USER_EMAIL}"`,
         `git config --global user.name "${project.secrets.GIT_USER_NAME}"`,
         'git add --all',
-        `git commit -m 'Update ${buildParams.imageTag}'`,
+        `git commit -m 'Update ${target}/${buildParams.imageTag}'`,
         'git push origin master',
       ];
 
