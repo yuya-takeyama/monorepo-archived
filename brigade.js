@@ -2,19 +2,19 @@ const { events, Job, Group } = require('brigadier');
 
 const parseBuildParams = (event) => {
   console.log('%j', event);
-  const branch = event.ref.split('/')[2];
+  const branch = event.revision.ref.split('/')[2];
 
   if (branch === 'develop') {
     imagePrefix = 'develop';
   } else if (branch === 'master') {
     imagePrefix = 'production';
   } else {
-    throw new Error(`Unsupported ref: ${event.ref}`);
+    throw new Error(`Unsupported ref: ${event.revision.ref}`);
   }
 
   return {
     overlay: imagePrefix,
-    imageTag: `${imagePrefix}.${event.commit}`,
+    imageTag: `${imagePrefix}.${event.revision.commit}`,
   };
 };
 
