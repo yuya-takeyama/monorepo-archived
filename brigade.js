@@ -1,4 +1,4 @@
-const { events, Job } = require('brigadier');
+const { events, Job, Group } = require('brigadier');
 
 events.on('push', async (e, project) => {
   const kanikoCredentialLoader = new Job('kaniko-credential-loader');
@@ -34,18 +34,20 @@ events.on('push', async (e, project) => {
   const buildTargets = buildDetectorResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
-  const imageBuilder = new Job('image-builder');
+  const buildJobs = buildTargets.map((target) => {
+    const imageBuilder = new Job(`image-builder:${target}`)
 
-  imageBuilder.image = 'gcr.io/kaniko-project/executor';
+    imageBuilder.storage.enabled = true;
+    imageBuilder.storage.path = '/kaniko/.docker';
 
-  imageBuilder.storage.enabled = true;
-  imageBuilder.storage.path = '/kaniko/.docker';
+    imageBuilder.args = [
+      `--context=/src/${target}`,
+      `--dockerfile=/src/${target}/Dockerfile`,
+      `--destination=yuyat/${target}`,
+    ];
 
-  imageBuilder.args = [
-    '--context=/src/service-foo',
-    '--dockerfile=/src/service-foo/Dockerfile',
-    '--destination=yuyat/service-foo',
-  ];
+    return imageBuilder;
+  });
 
-  await imageBuilder.run();
+  await Group.runAll(buildJobs);
 });
