@@ -52,12 +52,6 @@ events.on('push', async (e, project) => {
   ];
   */
 
-  imageBuilder.volumes = [
-    {
-      "name": "kaniko-credential-storage",
-      "emptyDir": {},
-    }
-  ];
   imageBuilder.volumeMounts = [
     {
       "name": "kaniko-credential-storage",
