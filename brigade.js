@@ -37,13 +37,20 @@ events.on('push', async (e, project) => {
   const imageBuilder = new Job('image-builder');
 
   imageBuilder.image = 'gcr.io/kaniko-project/executor';
+  imageBuilder.image = 'alpine';
 
+  image.tasks = [
+    'cat /kaniko/.docker/config.json',
+  ];
+
+  /*
   imageBuilder.args = [
     '--cache',
     '--context=/src/service-foo',
     '--dockerfile=/src/service-foo/Dockerfile',
     '--destination=yuyat/service-foo',
   ];
+  */
 
   imageBuilder.volumes = [
     {
