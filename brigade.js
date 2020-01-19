@@ -13,5 +13,5 @@ events.on('push', (e, p) => {
 
   imageBuilder.streamLogs = true;
 
-  imageRunner.run();
+  imageBuilder.run();
 });
