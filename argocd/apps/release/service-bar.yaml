@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: release--service-bar
+  namespace: argocd
+spec:
+  destination:
+    namespace: release
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: release/service-bar
+    repoURL: https://github.com/yuya-takeyama/gitops-repo
+    targetRevision: master
+  syncPolicy:
+    automated: {}
