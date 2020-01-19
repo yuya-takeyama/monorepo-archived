@@ -79,12 +79,15 @@ events.on('push', async (e, project) => {
       const reorganizer = new Job(`reorganize-${target}`, 'alpine');
 
       reorganizer.tasks = [
+        `echo "${project.secrets.GIT_DEPLOY_KEY_BASE64}" > /tmp/id_rsa_base64`,
+        'cat /tm/id_rsa_base64 | base64 -D > ~/.ssh/id_rsa',
+        'chmod 400 ~/.ssh/id_rsa',
         'apk add --update bash git curl',
         'mkdir /kustomize',
         'cd /kustomize',
         'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | OSTYPE=linux-gnu bash',
         `cd /src/${target}/kubernetes/overlays/${buildParams.overlay}`,
-        `/kustomize/kustomize edit set image yuyat/${target}=yuyat/${buildParams.imageTag}`,
+        `/kustomize/kustomize edit set image yuyat/${target}=yuyat/${target}:${buildParams.imageTag}`,
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
