@@ -12,3 +12,5 @@ spec:
     path: develop/service-foo
     repoURL: https://github.com/yuya-takeyama/gitops-repo
     targetRevision: master
+  syncPolicy:
+    automated: {}

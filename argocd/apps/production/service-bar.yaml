@@ -9,6 +9,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: service-bar/kubernetes/overlays/production
-    repoURL: https://github.com/yuya-takeyama/monorepo
-    targetRevision: develop
+    path: production/service-bar
+    repoURL: https://github.com/yuya-takeyama/gitops-repo
+    targetRevision: master
+  syncPolicy:
+    automated: {}
