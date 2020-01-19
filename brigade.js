@@ -89,9 +89,9 @@ events.on('push', async (e, project) => {
         `git commit -m 'Update ${buildParams.imageTag}'`,
       ];
 
-      return reorganizer;
+      return reorganizer.run();
     });
   });
 
-  await Group.runAll(buildJobs);
+  await Promise.all(buildJobs);
 });
