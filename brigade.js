@@ -84,7 +84,7 @@ events.on('push', async (e, project) => {
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
-        `kustomize build /src/${target}/kubernetes/overlays/${overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
+        `kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
         'git add --all',
         `git commit -m 'Update ${buildParams.imageTag}'`,
       ];
