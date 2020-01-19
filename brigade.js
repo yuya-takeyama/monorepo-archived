@@ -31,11 +31,12 @@ events.on('push', async (e, project) => {
   ];
 
   const buildDetectorResult = await buildDetector.run();
+
   const buildTargets = buildDetectorResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
   const buildJobs = buildTargets.map((target) => {
-    const imageBuilder = new Job(`build-${target}`)
+    const imageBuilder = new Job(`build-${target}`);
 
     imageBuilder.storage.enabled = true;
     imageBuilder.storage.path = '/kaniko/.docker';
@@ -49,5 +50,5 @@ events.on('push', async (e, project) => {
     return imageBuilder;
   });
 
-  await Group.runAll(buildJobs);
+  Group.runAll(buildJobs);
 });
