@@ -29,7 +29,6 @@ events.on('push', async (e, project) => {
   imageBuilder.storage.path = '/kaniko/.docker';
 
   imageBuilder.args = [
-    '--cache',
     '--context=/src/service-foo',
     '--dockerfile=/src/service-foo/Dockerfile',
     '--destination=yuyat/service-foo',
