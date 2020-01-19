@@ -82,7 +82,7 @@ events.on('push', async (e, project) => {
         'apk add --update bash git curl',
         'mkdir /kustomize',
         'cd /kustomize',
-        'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash',
+        'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -x',
         'ls -lah',
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
