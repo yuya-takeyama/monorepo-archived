@@ -50,5 +50,5 @@ events.on('push', async (e, project) => {
     return imageBuilder;
   });
 
-  Group.runAll(buildJobs);
+  Group.runAll(buildJobs).then(result => console.dir(result)).catch(err => console.error(err));
 });
