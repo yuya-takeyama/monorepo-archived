@@ -9,7 +9,7 @@ const createKanikoCredentialLoaderJob = (credential) => {
   const auth = {
     auths: {
       'https://index.docker.io/v1/': {
-        'auth': project.secrets.DOCKER_CREDENTIAL,
+        'auth': credential,
       },
     },
   };
