@@ -55,6 +55,6 @@ events.on('push', async (e, project) => {
     await Group.runAll(buildJobs);
   } catch (err) {
     console.log('Error!!!');
-    console.log(err.message);
+    console.log('Error Message = ' + err.message);
   }
 });
