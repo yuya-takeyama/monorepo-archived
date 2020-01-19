@@ -6,7 +6,10 @@ events.on('push', (e, p) => {
   imageBuilder.image = 'gcr.io/kaniko-project/executor';
 
   imageBuilder.args = [
-    '--help',
+    '--cache',
+    '--context=/src/service-foo',
+    '--dockerfile=/src/service-foo/Dockerfile',
+    '--destination=yuyat/service-foo',
   ];
 
   imageBuilder.streamLogs = true;
