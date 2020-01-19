@@ -30,7 +30,7 @@ events.on('push', async (e, project) => {
     'find . -name Dockerfile | awk -F / \'{ print $2 }\'',
   ];
 
-  const buildTargets = (await buildDetector.run()).split(/\n/);
+  const buildTargets = await buildDetector.run();
   console.log('buildTargets = %j', buildTargets);
 
   const imageBuilder = new Job('image-builder');
