@@ -31,7 +31,7 @@ events.on('push', async (e, project) => {
   ];
 
   const buildDetectorResult = await buildDetector.run();
-  const buildTargets = buildDetectorResult.data.split('\n');
+  const buildTargets = buildDetectorResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
   const imageBuilder = new Job('image-builder');
