@@ -89,7 +89,7 @@ events.on('push', async (e, project) => {
         `git commit -m 'Update ${buildParams.imageTag}'`,
       ];
 
-      return reorganizer.run();
+      return reorganizer;
     });
   });
 
