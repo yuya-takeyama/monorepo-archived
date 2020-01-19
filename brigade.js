@@ -81,6 +81,7 @@ events.on('push', async (e, project) => {
       reorganizer.tasks = [
         'apk add --update bash git curl',
         'curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash',
+        'mv kustomize /usr/local/bin',
         'git clone https://github.com/yuya-takeyama/gitops-repo /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
