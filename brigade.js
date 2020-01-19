@@ -1,6 +1,7 @@
 const { events, Job, Group } = require('brigadier');
 
 const parseBuildParams = (event) => {
+  console.log('%j', event);
   const branch = event.ref.split('/')[2];
 
   if (branch === 'develop') {
