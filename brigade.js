@@ -93,5 +93,5 @@ events.on('push', async (e, project) => {
     });
   });
 
-  await Group(buildJobs).runAll(buildJobs);
+  await Group.runAll(buildJobs);
 });
