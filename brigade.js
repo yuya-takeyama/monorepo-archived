@@ -17,7 +17,6 @@ events.on('push', async (e, project) => {
   };
   kanikoCredentialLoader.tasks = [
     `echo '${JSON.stringify(auth)}' > /kaniko/.docker/config.json`,
-    `cat /kaniko/.docker/config.json`,
   ];
 
   await kanikoCredentialLoader.run();
