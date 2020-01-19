@@ -20,8 +20,6 @@ events.on('push', async (e, project) => {
     `cat /kaniko/.docker/config.json`,
   ];
 
-  kanikoCredentialLoader.streamLogs = true;
-
   await kanikoCredentialLoader.run();
 
   const imageBuilder = new Job('image-builder');
@@ -37,8 +35,6 @@ events.on('push', async (e, project) => {
     '--dockerfile=/src/service-foo/Dockerfile',
     '--destination=yuyat/service-foo',
   ];
-
-  imageBuilder.streamLogs = true;
 
   await imageBuilder.run();
 });
