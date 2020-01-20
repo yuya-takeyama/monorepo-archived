@@ -51,6 +51,8 @@ const createDetectBuildsJob = () => {
 };
 
 events.on('push', async (e, project) => {
+  console.log('%j', e);
+
   const setupJobs = new Group([
     createKanikoCredentialLoaderJob(project.secrets.DOCKER_CREDENTIAL),
     createDetectBuildsJob(),
