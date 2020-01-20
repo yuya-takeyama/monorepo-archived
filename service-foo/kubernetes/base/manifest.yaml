@@ -17,6 +17,9 @@ spec:
       containers:
       - image: yuyat/service-foo
         name: service-foo
+        envFrom:
+        - configMapRef:
+            name: service-foo-config
 ---
 apiVersion: v1
 kind: Service

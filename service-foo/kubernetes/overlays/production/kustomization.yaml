@@ -3,3 +3,4 @@ bases:
 
 patchesStrategicMerge:
 - replicas.yaml
+- config.yaml

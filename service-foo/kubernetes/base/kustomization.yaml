@@ -1,2 +1,5 @@
 resources:
 - manifest.yaml
+
+configMapGenerator:
+- name: service-foo-config
