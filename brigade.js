@@ -127,7 +127,7 @@ events.on('push', async (e, project) => {
         `mkdir -pv ${manifestDir}`,
 
         `echo 'apiVersion: v1' > ${baseDir}/namespace.yaml`,
-        `echo 'kind: namespace' >> ${baseDir}/namespace.yaml`,
+        `echo 'kind: Namespace' >> ${baseDir}/namespace.yaml`,
         `echo 'metadata:' >> ${baseDir}/namespace.yaml`,
         `echo '  name: ${buildParams.namespace}' >> ${baseDir}/namespace.yaml`,
 
