@@ -22,6 +22,7 @@ const parseBuildParams = async (event, octokit) => {
       repo: 'monorepo',
       commit_sha: event.revision.commit,
     });
+    console.log('%j', pullRequests);
     const pullRequestNumber = pullRequests[0].url.match(/\/(\d+)$/)[1];
     overlay = 'staging';
     imagePrefix = `pr-${pullRequestNumber}`;
@@ -65,7 +66,6 @@ const createDetectBuildsJob = () => {
 };
 
 events.on('push', async (e, project) => {
-  console.log('%j', e);
   const octokit = new Octokit({ auth: project.secrets.GITHUB_API_TOKEN });
 
   const setupJobs = new Group([
