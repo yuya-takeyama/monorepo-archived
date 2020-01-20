@@ -1,20 +1,34 @@
 const { events, Job, Group } = require('brigadier');
+const Octokit = require('@octokit/rest');
 
-const parseBuildParams = (event) => {
+const parseBuildParams = async (event, octokit) => {
   const branch = event.revision.ref.split('/')[2];
 
+  let overlay;
+  let imagePrefix;
+
   if (branch === 'develop') {
+    overlay = 'develop';
     imagePrefix = 'develop';
   } else if (branch === 'release') {
+    overlay = 'release';
     imagePrefix = 'release';
   } else if (branch === 'master') {
+    overlay = 'production';
     imagePrefix = 'production';
   } else {
-    throw new Error(`Unsupported ref: ${event.revision.ref}`);
+    const pullRequests = await octokit.repos.listPullRequestsAssociatedWithCommit({
+      owner: 'yuya-takeyama',
+      repo: 'monorepo',
+      commit_sha: event.revision.commit,
+    });
+    const pullRequestNumber = pullRequests[0].url.match(/\/(\d+)$/)[1];
+    overlay = 'staging';
+    imagePrefix = `pr-${pullRequestNumber}`;
   }
 
   return {
-    overlay: imagePrefix,
+    overlay: overlay,
     imageTag: `${imagePrefix}.${event.revision.commit}`,
   };
 };
@@ -52,6 +66,7 @@ const createDetectBuildsJob = () => {
 
 events.on('push', async (e, project) => {
   console.log('%j', e);
+  const octokit = new Octokit({ auth: projects.secrets.GITHUB_API_TOKEN });
 
   const setupJobs = new Group([
     createKanikoCredentialLoaderJob(project.secrets.DOCKER_CREDENTIAL),
@@ -63,7 +78,7 @@ events.on('push', async (e, project) => {
   const buildTargets = detectBuildsResult.data.split('\n').filter((target) => target !== '');
   console.log('buildTargets = %j', buildTargets);
 
-  const buildParams = parseBuildParams(e);
+  const buildParams = await parseBuildParams(e, octokit);
 
   const buildJobs = buildTargets.map((target) => {
     const imageBuilder = new Job(`build-${target}`);

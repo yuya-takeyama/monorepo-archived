@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@octokit/rest": "^16.37.0",
+    "brigadier": "^0.5.2"
+  }
+}
