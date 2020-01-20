@@ -22,7 +22,6 @@ const parseBuildParams = async (event, octokit) => {
       repo: 'monorepo',
       commit_sha: event.revision.commit,
     });
-    console.log('%j', res.data);
     const pullRequestNumber = res.data[0].url.match(/\/(\d+)$/)[1];
     overlay = 'staging';
     imagePrefix = `pr-${pullRequestNumber}`;
@@ -79,6 +78,7 @@ events.on('push', async (e, project) => {
   console.log('buildTargets = %j', buildTargets);
 
   const buildParams = await parseBuildParams(e, octokit);
+  console.log('buildParams = %j', buildParams);
 
   const buildJobs = buildTargets.map((target) => {
     const imageBuilder = new Job(`build-${target}`);
