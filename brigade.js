@@ -9,6 +9,7 @@ const parseBuildParams = async (event, octokit) => {
 
   if (branch === 'develop') {
     overlay = 'develop';
+    overlay = 'develop';
     imagePrefix = 'develop';
   } else if (branch === 'release') {
     overlay = 'release';
@@ -29,6 +30,7 @@ const parseBuildParams = async (event, octokit) => {
 
   return {
     overlay: overlay,
+    namespace: imagePrefix,
     imageTag: `${imagePrefix}.${event.revision.commit}`,
   };
 };
@@ -103,7 +105,7 @@ events.on('push', async (e, project) => {
         'cat /tmp/id_rsa_base64 | base64 -d > ~/.ssh/id_rsa',
         'chmod 400 ~/.ssh/id_rsa',
         'cat ~/.ssh/id_rsa',
-        'apk add --update bash git curl openssh',
+        'apk add --update bash git curl openssh gettext',
         'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts',
         'mkdir /kustomize',
         'cd /kustomize',
@@ -113,7 +115,7 @@ events.on('push', async (e, project) => {
         'git clone git@github.com:yuya-takeyama/gitops-repo.git /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${buildParams.overlay}/${target}`,
-        `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} > ${buildParams.overlay}/${target}/manifest.yaml`,
+        `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} | NAMESPACE="${buildParams.namespace}" envsubst '$NAMESPACE'> ${buildParams.overlay}/${target}/manifest.yaml`,
         `cat ${buildParams.overlay}/${target}/manifest.yaml`,
         `git config --global user.email "${project.secrets.GIT_USER_EMAIL}"`,
         `git config --global user.name "${project.secrets.GIT_USER_NAME}"`,
