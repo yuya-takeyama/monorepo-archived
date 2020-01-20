@@ -99,6 +99,13 @@ events.on('push', async (e, project) => {
     return imageBuilder.run().then(() => {
       const reorganizer = new Job(`reorganize-${target}`, 'alpine');
 
+      let manifestDir;
+      if (buildParams.overlay === 'staging') {
+        manifestDir = `staging/${buildParams.namespace}/${target}`;
+      } else {
+        manifestDir = `${buildParams.namespace}/${target}`;
+      }
+
       reorganizer.tasks = [
         `echo "${project.secrets.GIT_DEPLOY_KEY_BASE64}" > /tmp/id_rsa_base64`,
         'mkdir -pv ~/.ssh',
@@ -114,9 +121,9 @@ events.on('push', async (e, project) => {
         `/kustomize/kustomize edit set image yuyat/${target}=yuyat/${target}:${buildParams.imageTag}`,
         'git clone git@github.com:yuya-takeyama/gitops-repo.git /gitops-repo',
         'cd /gitops-repo',
-        `mkdir -pv ${buildParams.overlay}/${target}`,
-        `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} | NAMESPACE="${buildParams.namespace}" envsubst '$NAMESPACE'> ${buildParams.overlay}/${target}/manifest.yaml`,
-        `cat ${buildParams.overlay}/${target}/manifest.yaml`,
+        `mkdir -pv ${manifestDir}`,
+        `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} | NAMESPACE="${buildParams.namespace}" envsubst '$NAMESPACE'> ${manifestDir}/manifest.yaml`,
+        `cat ${manifestDir}/manifest.yaml`,
         `git config --global user.email "${project.secrets.GIT_USER_EMAIL}"`,
         `git config --global user.name "${project.secrets.GIT_USER_NAME}"`,
         'git add --all',
