@@ -22,7 +22,7 @@ const parseBuildParams = async (event, octokit) => {
       repo: 'monorepo',
       commit_sha: event.revision.commit,
     });
-    console.log('%j', pullRequests);
+    console.log('%j', res.data);
     const pullRequestNumber = res.data[0].url.match(/\/(\d+)$/)[1];
     overlay = 'staging';
     imagePrefix = `pr-${pullRequestNumber}`;
