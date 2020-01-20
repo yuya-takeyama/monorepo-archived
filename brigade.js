@@ -17,13 +17,13 @@ const parseBuildParams = async (event, octokit) => {
     overlay = 'production';
     imagePrefix = 'production';
   } else {
-    const pullRequests = await octokit.repos.listPullRequestsAssociatedWithCommit({
+    const res = await octokit.repos.listPullRequestsAssociatedWithCommit({
       owner: 'yuya-takeyama',
       repo: 'monorepo',
       commit_sha: event.revision.commit,
     });
     console.log('%j', pullRequests);
-    const pullRequestNumber = pullRequests[0].url.match(/\/(\d+)$/)[1];
+    const pullRequestNumber = res.data[0].url.match(/\/(\d+)$/)[1];
     overlay = 'staging';
     imagePrefix = `pr-${pullRequestNumber}`;
   }
