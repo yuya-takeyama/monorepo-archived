@@ -99,11 +99,14 @@ events.on('push', async (e, project) => {
     return imageBuilder.run().then(() => {
       const reorganizer = new Job(`reorganize-${target}`, 'alpine');
 
+      let baseDir;
       let manifestDir;
       if (buildParams.overlay === 'staging') {
-        manifestDir = `staging/${buildParams.namespace}/${target}`;
+        baseDir = `staging/${buildParams.namespace}`;
+        manifestDir = `${baseDir}/${target}`;
       } else {
-        manifestDir = `${buildParams.namespace}/${target}`;
+        baseDir = `${buildParams.namespace}`;
+        manifestDir = `${baseDir}/${target}`;
       }
 
       reorganizer.tasks = [
@@ -122,6 +125,12 @@ events.on('push', async (e, project) => {
         'git clone git@github.com:yuya-takeyama/gitops-repo.git /gitops-repo',
         'cd /gitops-repo',
         `mkdir -pv ${manifestDir}`,
+
+        `echo 'apiVersion: v1' > ${baseDir}/namespace.yaml`,
+        `echo 'kind: namespace' >> ${baseDir}/namespace.yaml`,
+        `echo 'metadata:' >> ${baseDir}/namespace.yaml`,
+        `echo '  name: ${buildParams.namespace}' >> ${baseDir}/namespace.yaml`,
+
         `/kustomize/kustomize build /src/${target}/kubernetes/overlays/${buildParams.overlay} | NAMESPACE="${buildParams.namespace}" envsubst '$NAMESPACE'> ${manifestDir}/manifest.yaml`,
         `cat ${manifestDir}/manifest.yaml`,
         `git config --global user.email "${project.secrets.GIT_USER_EMAIL}"`,
