@@ -66,7 +66,7 @@ const createDetectBuildsJob = () => {
 
 events.on('push', async (e, project) => {
   console.log('%j', e);
-  const octokit = new Octokit({ auth: projects.secrets.GITHUB_API_TOKEN });
+  const octokit = new Octokit({ auth: project.secrets.GITHUB_API_TOKEN });
 
   const setupJobs = new Group([
     createKanikoCredentialLoaderJob(project.secrets.DOCKER_CREDENTIAL),
