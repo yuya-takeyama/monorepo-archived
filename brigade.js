@@ -146,3 +146,4 @@ events.on('push', async (e, project) => {
 
   await Promise.all(buildJobs);
 });
+
