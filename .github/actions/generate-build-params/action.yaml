@@ -5,8 +5,8 @@ inputs:
     description: Prefix of image name
     required: true
     default: ghcr.io/${{ github.repository }}/
-  image-name:
-    description: Image name
+  service-name:
+    description: Service name
     required: true
 outputs:
   overlay:
@@ -25,6 +25,6 @@ runs:
     - id: action
       run: |
         IMAGE_NAME_PREFIX="${{ inputs.image-name-prefix }}" \
-          IMAGE_NAME="${{ inputs.image-name }}" \
+          SERVICE_NAME="${{ inputs.service-name }}" \
           ${{ github.action_path }}/action.sh
       shell: bash

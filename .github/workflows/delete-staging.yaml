@@ -1,0 +1,38 @@
+name: delete-staging
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: yuya-takeyama/gitops-repo
+          ref: master
+          path: gitops-repo
+          token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - run: |
+          pr_number="${GITHUB_REF#"refs/pull/"}"
+          pr_number="${pr_number%"/merge"}"
+          branch="${SERVICE_NAME}/$(uuidgen)"
+
+          cd gitops-repo
+          rm -rf "applications/staging/pr-${pr_number}"
+          rm -rf "staging/pr-${pr_number}"
+
+          git checkout -b "$branch"
+          git config --global user.email "${GIT_USER_EMAIL}"
+          git config --global user.name "${GIT_USER_NAME}"
+          git add --all
+          git commit -m "Close staging pr-${pr_number}"
+          git push -f origin "$branch"
+          gh pr create \
+            --title "Remove staging pr-${pr_number}" \
+            --body "https://github.com/${GITHUB_REPOSITORY}/pull/${pr_number} has been closed."
+          gh pr merge --merge
+        env:
+          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
