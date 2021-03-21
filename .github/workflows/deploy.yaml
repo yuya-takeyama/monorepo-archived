@@ -2,6 +2,9 @@ name: deploy
 
 on:
   pull_request:
+    branches-ignore:
+      - release
+      - master
 
   push:
     branches:
