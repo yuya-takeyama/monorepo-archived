@@ -35,3 +35,4 @@ jobs:
         env:
           GIT_USER_EMAIL: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           GIT_USER_NAME: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+          GITHUB_TOKEN: ${{ secrets.BUILD_GITHUB_TOKEN }}
