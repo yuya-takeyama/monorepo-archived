@@ -10,6 +10,28 @@ on:
       - master
 
 jobs:
+  apply-argocd-application:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: yuya-takeyama/gitops-repo
+          ref: master
+          path: gitops-repo
+          token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - id: build-params
+        uses: ./.github/actions/generate-build-params
+        with:
+          service-name: applications
+      - uses: ./.github/actions/generate-argocd-application
+        with:
+          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          overlay: ${{ steps.build-params.outputs.overlay }}
+          namespace: ${{ steps.build-params.outputs.namespace }}
+          git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
+          git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+
   build-and-push:
     runs-on: ubuntu-latest
     strategy:
