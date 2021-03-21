@@ -3,7 +3,7 @@
 set -eu
 set -o pipefail
 
-image_name="${IMAGE_NAME_PREFIX}${IMAGE_NAME}"
+image_name="${IMAGE_NAME_PREFIX}${SERVICE_NAME}"
 overlay=""
 namespace=""
 image_tags=""

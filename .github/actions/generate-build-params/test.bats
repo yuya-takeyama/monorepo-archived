@@ -1,5 +1,5 @@
 export IMAGE_NAME_PREFIX="ghcr.io/yuya-takeyama/monorepo/"
-export IMAGE_NAME="service-foo"
+export SERVICE_NAME="service-foo"
 export GITHUB_SHA="deadbeef"
 
 @test "returns build params for develop when the event is 'push' to 'develop' branch" {

@@ -43,7 +43,7 @@ jobs:
       - id: build-params
         uses: ./.github/actions/generate-build-params
         with:
-          image-name: ${{ matrix.service-name }}
+          service-name: ${{ matrix.service-name }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
