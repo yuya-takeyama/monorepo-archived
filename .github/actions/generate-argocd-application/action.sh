@@ -44,6 +44,17 @@ spec:
     - CreateNamespace=true
 EOS
 
+manifest_dir="${gitops_repo_dir}/${path}"
+namespace_file="${manifest_dir}/namespace.yaml"
+
+mkdir -p "${manifest_dir}"
+cat << EOS > "${namespace_file}"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${NAMESPACE}
+EOS
+
 if [[ "$OVERLAY" == "staging" ]]; then
 staging_toplevel_manifest_file="${gitops_repo_dir}/applications/staging/application.yaml"
   cat << EOS > "${staging_toplevel_manifest_file}"
