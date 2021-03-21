@@ -23,6 +23,8 @@ kind: Application
 metadata:
   name: ${NAMESPACE}
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     namespace: ${NAMESPACE}
@@ -50,6 +52,8 @@ kind: Application
 metadata:
   name: staging
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     server: https://kubernetes.default.svc
