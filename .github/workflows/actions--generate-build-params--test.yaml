@@ -1,0 +1,28 @@
+name: actions / generate-build-params / test
+
+on:
+  pull_request:
+    paths:
+      - .github/actions/generate-build-params/**
+      - .github/workflows/actions--generate-build-params--test.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/generate-build-params/**
+      - .github/workflows/actions--generate-build-params--test.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Bats
+        uses: mig4/setup-bats@v1
+        with:
+          bats-version: 1.3.0
+      - run: bats test.bats
+        working-directory: .github/actions/generate-build-params

@@ -1,0 +1,30 @@
+name: generate-image-tags
+
+inputs:
+  image-name-prefix:
+    description: Prefix of image name
+    required: true
+    default: ghcr.io/${{ github.repository }}/
+  image-name:
+    description: Image name
+    required: true
+outputs:
+  overlay:
+    description: Overlay name to use build with kustomize
+    value: ${{ steps.action.outputs.overlay }}
+  namespace:
+    description: Kubernetes namespace to deploy to
+    value: ${{ steps.action.outputs.namespace }}
+  image-tags:
+    description: Comma-separated list of generated image tags
+    value: ${{ steps.action.outputs.image-tags }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: action
+      run: |
+        IMAGE_NAME_PREFIX="${{ inputs.image-name-prefix }}" \
+          IMAGE_NAME="${{ inputs.image-name }}" \
+          ${{ github.action_path }}/action.sh
+      shell: bash
