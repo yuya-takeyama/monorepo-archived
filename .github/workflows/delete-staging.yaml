@@ -33,5 +33,5 @@ jobs:
             --body "https://github.com/${GITHUB_REPOSITORY}/pull/${pr_number} has been closed."
           gh pr merge --merge
         env:
-          GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-          GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+          GIT_USER_EMAIL: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
+          GIT_USER_NAME: ${{ secrets.DEPLOY_GIT_USER_NAME }}
