@@ -15,7 +15,7 @@ spec:
         app: service-foo
     spec:
       containers:
-      - image: yuyat/service-foo
+      - image: service-foo
         name: service-foo
 ---
 apiVersion: v1
