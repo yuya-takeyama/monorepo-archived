@@ -15,7 +15,7 @@ spec:
         app: service-bar
     spec:
       containers:
-      - image: yuyat/service-bar
+      - image: service-bar
         name: service-bar
 ---
 apiVersion: v1

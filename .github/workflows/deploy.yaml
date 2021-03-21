@@ -1,0 +1,79 @@
+name: deploy
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service-name:
+          - service-foo
+          - service-bar
+    steps:
+      # Prepare 
+      - uses: actions/checkout@v2
+      - uses: docker/setup-qemu-action@v1
+      - uses: docker/setup-buildx-action@v1
+      - uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: '4.0.5'
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # Build and push Docker image
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - id: build-params
+        uses: ./.github/actions/generate-build-params
+        with:
+          image-name: ${{ matrix.service-name }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ${{ matrix.service-name }}
+          tags: ${{ steps.build-params.outputs.image-tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+      - name: Move Docker layer cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      # Build and push Kubernetes manifest
+      - name: Prepare kustomize workspace
+        run: |
+          mkdir /tmp/kustomize
+      - uses: actions/checkout@v2
+        with:
+          repository: yuya-takeyama/gitops-repo
+          ref: master
+          path: gitops-repo
+          token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - uses: ./.github/actions/build-and-push-manifest
+        with:
+          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          service-name: ${{ matrix.service-name }}
+          overlay: ${{ steps.build-params.outputs.overlay }}
+          namespace: ${{ steps.build-params.outputs.namespace }}
+          image-tag: ${{ steps.build-params.outputs.image-tags }}
+          git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
+          git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}

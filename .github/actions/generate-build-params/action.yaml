@@ -9,6 +9,9 @@ inputs:
     description: Image name
     required: true
 outputs:
+  overlay:
+    description: Overlay name to use build with kustomize
+    value: ${{ steps.action.outputs.overlay }}
   namespace:
     description: Kubernetes namespace to deploy to
     value: ${{ steps.action.outputs.namespace }}
@@ -17,7 +20,7 @@ outputs:
     value: ${{ steps.action.outputs.image-tags }}
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - id: action
       run: |
