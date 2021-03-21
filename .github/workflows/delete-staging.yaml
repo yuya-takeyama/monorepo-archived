@@ -22,6 +22,11 @@ jobs:
           rm -rf "applications/staging/pr-${pr_number}"
           rm -rf "staging/pr-${pr_number}"
 
+          if [ -z $(git status --porcelain) ]; then
+            echo "Nothing to commit"
+            exit
+          fi
+
           git checkout -b "$branch"
           git config --global user.email "${GIT_USER_EMAIL}"
           git config --global user.name "${GIT_USER_NAME}"
