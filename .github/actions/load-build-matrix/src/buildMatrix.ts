@@ -39,10 +39,7 @@ const getBuildParams = (ctx: Context, branch: string): BuildParams[] => {
 
   switch (branch) {
     case 'develop':
-      return [
-        { namespace: branch, overlay: branch },
-        { namespace: 'preview', overlay: 'preview' },
-      ];
+      return [{ namespace: branch, overlay: branch }];
 
     case 'release':
       return [{ namespace: branch, overlay: branch }];
