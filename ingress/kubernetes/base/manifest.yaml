@@ -6,7 +6,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /foo
+      - path: /
         backend:
           serviceName: service-foo
           servicePort: 80
