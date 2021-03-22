@@ -4,7 +4,10 @@ set -eu
 set -o pipefail
 
 cd "${SERVICE_NAME}/kubernetes/overlays/${OVERLAY}"
-kustomize edit set image "${SERVICE_NAME}=${IMAGE_TAG}"
+
+if [ -n "$IMAGE_TAG" ]; then
+  kustomize edit set image "${SERVICE_NAME}=${IMAGE_TAG}"
+fi
 
 input_dir="${GITHUB_WORKSPACE}/${SERVICE_NAME}/kubernetes/overlays/${OVERLAY}"
 gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"

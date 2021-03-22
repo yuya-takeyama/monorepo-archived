@@ -4,9 +4,15 @@ set -eu
 set -o pipefail
 
 gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"
-branch="${SERVICE_NAME}/$(uuidgen)"
 
 cd "$gitops_repo_dir"
+
+if [ -z $(git status --porcelain) ]; then
+  echo "Nothing to commit"
+  exit
+fi
+
+branch="${SERVICE_NAME}/$(uuidgen)"
 git checkout -b "$branch"
 git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"

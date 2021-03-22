@@ -1,0 +1,36 @@
+name: docker-build-required
+description: Check if docker build is required for the service and overlay
+
+inputs:
+  service-name:
+    required: true
+  overlay:
+    required: true
+
+outputs:
+  required:
+    description: '"true" or "false"'
+    value: ${{ steps.action.outputs.required }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: action
+      run: |
+        dockerfile="${{ github.workspace }}/${{ inputs.service-name }}/Dockerfile"
+        kustomization="${{ github.workspace }}/${{ inputs.service-name }}/kubernetes/overlays/${{ inputs.overlay }}/kustomization.yaml"
+
+        if [ ! -f "$dockerfile" ]; then 
+          echo "::warning::Dockerfile does not exist: docker build is not required"
+          echo "::set-output name=required::false"
+          exit
+        fi
+
+        if [ ! -f "$kustomization" ]; then 
+          echo "::warning::kustomization.yaml does not exist: docker build is not required"
+          echo "::set-output name=required::false"
+          exit
+        fi
+
+        echo "::set-output name=required::true"
+      shell: bash
