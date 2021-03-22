@@ -33,10 +33,7 @@ test('develop branch', () => {
   const buildMatrix = getBuildMatrix(getPushContext('develop'));
   expect(buildMatrix).toEqual<BuildMatrix>({
     services,
-    buildParams: [
-      JSON.stringify({ namespace: 'develop', overlay: 'develop' }),
-      JSON.stringify({ namespace: 'preview', overlay: 'preview' }),
-    ],
+    buildParams: [JSON.stringify({ namespace: 'develop', overlay: 'develop' })],
   });
 });
 
