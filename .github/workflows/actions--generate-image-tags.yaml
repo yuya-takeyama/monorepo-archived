@@ -2,9 +2,12 @@ name: actions / generate-image-tags
 
 on:
   pull_request:
+    branches-ignore:
+      - release
+      - master
     paths:
       - .github/actions/generate-image-tags/**
-      - .github/workflows/actions--generate-image-tags--test.yaml
+      - .github/workflows/actions--generate-image-tags.yaml
 
   push:
     branches:
@@ -13,7 +16,7 @@ on:
       - master
     paths:
       - .github/actions/generate-image-tags/**
-      - .github/workflows/actions--generate-image-tags--test.yaml
+      - .github/workflows/actions--generate-image-tags.yaml
 
 jobs:
   test:
