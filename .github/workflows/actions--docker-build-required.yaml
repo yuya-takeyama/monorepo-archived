@@ -1,0 +1,54 @@
+name: actions / docker-build-required
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/docker-build-required/**
+      - .github/workflows/actions--docker-build-required.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/docker-build-required/**
+      - .github/workflows/actions--docker-build-required.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: action-without-dockerfile
+        uses: ./.github/actions/docker-build-required
+        with:
+          service-name: ingress
+          overlay: staging
+      - name: Test without Dockerfile
+        if: ${{ steps.action-without-dockerfile.outputs.required != 'false' }}
+        run: exit 1
+
+      - id: action-without-overlay
+        uses: ./.github/actions/docker-build-required
+        with:
+          service-name: service-foo
+          overlay: not-exist
+      - name: Test without overlay
+        if: ${{ steps.action-without-overlay.outputs.required != 'false' }}
+        run: exit 1
+
+
+      - id: action-docker-build-required
+        uses: ./.github/actions/docker-build-required
+        with:
+          service-name: service-foo
+          overlay: develop
+
+      - name: Test action-required
+        if: ${{ steps.action-docker-build-required.outputs.required != 'true' }}
+        run: exit 1
