@@ -13,7 +13,22 @@ on:
       - master
 
 jobs:
-  apply-argocd-application:
+  load-build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.load-build-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: load-build-matrix
+        uses: ./.github/actions/load-build-matrix
+
+  push-argocd-app:
+    name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
+    needs: load-build-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        build-params: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).buildParams }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,27 +38,25 @@ jobs:
           ref: master
           path: gitops-repo
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-      - id: build-params
-        uses: ./.github/actions/generate-build-params
-        with:
-          service-name: applications
-      - uses: ./.github/actions/generate-argocd-application
+      - uses: ./.github/actions/push-argocd-app
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          overlay: ${{ steps.build-params.outputs.overlay }}
-          namespace: ${{ steps.build-params.outputs.namespace }}
+          overlay: ${{ fromJSON(matrix.build-params).overlay }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
 
   build-and-push:
-    runs-on: ubuntu-latest
+    name: 'build-and-push / ${{ matrix.service-name }} / ${{ fromJSON(matrix.build-params).overlay }}'
+    needs: load-build-matrix
     strategy:
+      fail-fast: false
       matrix:
-        service-name:
-          - service-foo
-          - service-bar
+        service-name: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).services }}
+        build-params: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).buildParams }}
+    runs-on: ubuntu-latest
     steps:
-      # Prepare 
+      # Prepare
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
@@ -65,17 +78,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.BUILD_GITHUB_TOKEN }}
-      - id: build-params
-        uses: ./.github/actions/generate-build-params
+      - id: image-tags
+        uses: ./.github/actions/generate-image-tags
         with:
           service-name: ${{ matrix.service-name }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           push: true
           context: ${{ matrix.service-name }}
-          tags: ${{ steps.build-params.outputs.image-tags }}
+          tags: ${{ steps.image-tags.outputs.image-tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
       - name: Move Docker layer cache
@@ -97,8 +111,8 @@ jobs:
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
           service-name: ${{ matrix.service-name }}
-          overlay: ${{ steps.build-params.outputs.overlay }}
-          namespace: ${{ steps.build-params.outputs.namespace }}
-          image-tag: ${{ steps.build-params.outputs.image-tags }}
+          overlay: ${{ fromJSON(matrix.build-params).overlay }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
+          image-tag: ${{ steps.image-tags.outputs.image-tags }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}

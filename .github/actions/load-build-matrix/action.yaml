@@ -1,0 +1,9 @@
+name: load-build-matrix
+
+outputs:
+  matrix:
+    description: Build matrix of deploy targets
+
+runs:
+  using: 'node12'
+  main: dist/index.js
