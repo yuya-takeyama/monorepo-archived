@@ -1,4 +1,4 @@
-name: actions / generate-image-tags / test
+name: actions / generate-image-tags
 
 on:
   pull_request:
