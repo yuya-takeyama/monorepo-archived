@@ -1,0 +1,42 @@
+name: actions / generate-image-tags
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/generate-image-tags/**
+      - .github/workflows/actions--generate-image-tags.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/generate-image-tags/**
+      - .github/workflows/actions--generate-image-tags.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: action-result
+        uses: ./.github/actions/generate-image-tags
+        with:
+          service-name: service-foo
+          namespace: pr-123
+          github-sha: deadbeef
+      - name: Test action result
+        if: ${{ steps.action-result.outputs.image-tags != 'ghcr.io/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef' }}
+        run: |
+          echo "Expected:"
+          echo "$EXPECTED"
+          echo "Actual:"
+          echo "$ACTUAL"
+          exit 1
+        env:
+          EXPECTED: ghcr.io/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef
+          ACTUAL: ${{ steps.action-result.outputs.image-tags }}

@@ -8,7 +8,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "This is Bar Service, Ver. 3!")
+		fmt.Fprintln(w, "This is Bar Service, Ver. 2021/03/22!")
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

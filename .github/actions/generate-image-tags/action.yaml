@@ -8,15 +8,15 @@ inputs:
   service-name:
     description: Service name
     required: true
-outputs:
-  overlay:
-    description: Overlay name to use build with kustomize
-    value: ${{ steps.action.outputs.overlay }}
   namespace:
     description: Kubernetes namespace to deploy to
-    value: ${{ steps.action.outputs.namespace }}
+    required: true
+  github-sha:
+    required: true
+    default: ${{ github.sha }}
+outputs:
   image-tags:
-    description: Comma-separated list of generated image tags
+    description: Line-delimited list of generated image tags
     value: ${{ steps.action.outputs.image-tags }}
 
 runs:
@@ -24,7 +24,8 @@ runs:
   steps:
     - id: action
       run: |
-        IMAGE_NAME_PREFIX="${{ inputs.image-name-prefix }}" \
-          SERVICE_NAME="${{ inputs.service-name }}" \
-          ${{ github.action_path }}/action.sh
+        image_name="${{ inputs.image-name-prefix }}${{ inputs.service-name }}"
+        image_tags="${image_name}:${{ inputs.namespace }}.${{ inputs.github-sha }}"
+
+        echo "::set-output name=image-tags::$image_tags"
       shell: bash
