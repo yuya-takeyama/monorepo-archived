@@ -1,5 +1,2 @@
 bases:
 - ../../base
-
-patchesStrategicMerge:
-- replicas.yaml
