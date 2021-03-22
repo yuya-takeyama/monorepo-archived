@@ -15,7 +15,6 @@ inputs:
     required: true
   image-tag:
     description: Docker image tag
-    required: true
   git-user-email:
     description: Git user email
     required: true
