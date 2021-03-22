@@ -1,0 +1,73 @@
+name: actions / load-build-matrix
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/load-build-matrix/**
+      - .github/workflows/actions--load-build-matrix.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/load-build-matrix/**
+      - .github/workflows/actions--load-build-matrix.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .github/actions/load-build-matrix
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: actions-load-build-matrix-${{ runner.os }}-yarn-${{ hashFiles('.github/actions/load-build-matrix/yarn.lock') }}
+          restore-keys: |
+            actions-load-build-matrix-${{ runner.os }}-yarn-
+      - run: yarn
+      - name: Build, test and lint
+        run: yarn all
+
+      - id: action-result
+        uses: ./.github/actions/load-build-matrix
+      - name: Test action result
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const matrix = JSON.parse(process.env.MATRIX);
+            console.log(`Matrix:`);
+            console.log(JSON.stringify(matrix));
+
+            if (!(matrix.services && matrix.services.length > 0)) {
+              core.setFailed('services must be an array');
+            }
+
+            if (!(matrix.buildParams && matrix.buildParams.length > 0)) {
+              core.setFailed('buildParams must be an array');
+            }
+
+            for (const buildParam of matrix.buildParams) {
+              const parsedParam = JSON.parse(buildParam);
+
+              if (!(typeof parsedParam.overlay === 'string' && parsedParam.overlay  !== '')) {
+                core.setFailed('overlay in buildParams must be a string');
+              }
+              if (!(typeof parsedParam.namespace === 'string' && parsedParam.namespace  !== '')) {
+                core.setFailed('namespace in buildParams must be a string');
+              }
+            }
+        env:
+          MATRIX: ${{ steps.action-result.outputs.matrix }}
