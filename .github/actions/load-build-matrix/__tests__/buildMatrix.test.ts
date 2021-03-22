@@ -1,7 +1,7 @@
 import { BuildMatrix, getBuildMatrix } from '../src/buildMatrix';
 import { Context } from '@actions/github/lib/context';
 
-const services = ['service-foo', 'service-bar'];
+const services = ['ingress', 'service-foo', 'service-bar'];
 
 const pullRequestCtx: Context = {
   eventName: 'pull_request',

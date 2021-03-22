@@ -10,7 +10,7 @@ require('./sourcemap-register.js');module.exports =
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getBuildMatrix = void 0;
 const getBuildMatrix = (ctx) => {
-    const services = ['service-foo', 'service-bar'];
+    const services = ['ingress', 'service-foo', 'service-bar'];
     const branch = getBranch(ctx);
     const buildParams = getBuildParams(ctx, branch);
     return {
