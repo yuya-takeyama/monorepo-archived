@@ -1,4 +1,4 @@
-name: build-manifest
+name: push-to-manifest-repo
 
 inputs:
   github-token:
@@ -7,14 +7,9 @@ inputs:
   service-name:
     description: Service name to build
     required: true
-  overlay:
-    description: Overlay name to use build with kustomize
-    required: true
   namespace:
     description: Kubernetes namespace to deploy to
     required: true
-  image-tag:
-    description: Docker image tag
   git-user-email:
     description: Git user email
     required: true
@@ -27,18 +22,9 @@ runs:
   steps:
     - run: |
         SERVICE_NAME="${{ inputs.service-name }}" \
-          OVERLAY="${{ inputs.overlay }}" \
           NAMESPACE="${{ inputs.namespace }}" \
-          IMAGE_TAG="${{ inputs.image-tag }}" \
-          ${{ github.action_path }}/build.sh
-      shell: bash
-    - run: |
-        SERVICE_NAME="${{ inputs.service-name }}" \
-          OVERLAY="${{ inputs.overlay }}" \
-          NAMESPACE="${{ inputs.namespace }}" \
-          IMAGE_TAG="${{ inputs.image-tag }}" \
           GITHUB_TOKEN="${{ inputs.github-token }}" \
           GIT_USER_EMAIL="${{ inputs.git-user-email }}" \
           GIT_USER_NAME="${{ inputs.git-user-name }}" \
-          ${{ github.action_path }}/push.sh
+          ${{ github.action_path }}/action.sh
       shell: bash
