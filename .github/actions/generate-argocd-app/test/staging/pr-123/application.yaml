@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pr-123
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: pr-123
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    directory:
+      recurse: true
+    path: staging/pr-123
+    repoURL: https://github.com/yuya-takeyama/gitops-repo.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

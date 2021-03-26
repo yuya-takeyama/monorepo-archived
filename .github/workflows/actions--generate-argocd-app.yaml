@@ -1,0 +1,46 @@
+name: actions / generate-argocd-app
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/generate-argocd-app/**
+      - .github/workflows/actions--generate-argocd-app.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/generate-argocd-app/**
+      - .github/workflows/actions--generate-argocd-app.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/generate-argocd-app
+        with:
+          overlay: staging
+          namespace: pr-123
+      - name: Check the result of pr-123
+        run: |
+          diff -u \
+            .github/actions/generate-argocd-app/test/staging/application.yaml \
+            gitops-repo/applications/staging/application.yaml
+          diff -u \
+            .github/actions/generate-argocd-app/test/staging/pr-123/application.yaml \
+            gitops-repo/applications/staging/pr-123/application.yaml
+      - uses: ./.github/actions/generate-argocd-app
+        with:
+          overlay: production
+          namespace: production
+      - name: Check the result of production
+        run: |
+          diff -u \
+            .github/actions/generate-argocd-app/test/production/application.yaml \
+            gitops-repo/applications/production/application.yaml

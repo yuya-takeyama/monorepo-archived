@@ -1,0 +1,25 @@
+name: build-manifest
+
+inputs:
+  service-name:
+    description: Service name to build
+    required: true
+  overlay:
+    description: Overlay name to use build with kustomize
+    required: true
+  namespace:
+    description: Kubernetes namespace to deploy to
+    required: true
+  image-tag:
+    description: Docker image tag
+
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        SERVICE_NAME="${{ inputs.service-name }}" \
+          OVERLAY="${{ inputs.overlay }}" \
+          NAMESPACE="${{ inputs.namespace }}" \
+          IMAGE_TAG="${{ inputs.image-tag }}" \
+          ${{ github.action_path }}/action.sh
+      shell: bash

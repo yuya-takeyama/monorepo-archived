@@ -38,10 +38,14 @@ jobs:
           ref: master
           path: gitops-repo
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-      - uses: ./.github/actions/push-argocd-app
+      - uses: ./.github/actions/generate-argocd-app
+        with:
+          overlay: ${{ fromJSON(matrix.build-params).overlay }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
+      - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          overlay: ${{ fromJSON(matrix.build-params).overlay }}
+          service-name: applications
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
@@ -118,12 +122,16 @@ jobs:
           ref: master
           path: gitops-repo
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-      - uses: ./.github/actions/build-and-push-manifest
+      - uses: ./.github/actions/build-manifest
         with:
-          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
           service-name: ${{ matrix.service-name }}
           overlay: ${{ fromJSON(matrix.build-params).overlay }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           image-tag: ${{ steps.image-tags.outputs.image-tags }}
+      - uses: ./.github/actions/push-to-manifest-repo
+        with:
+          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          service-name: ${{ matrix.service-name }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}

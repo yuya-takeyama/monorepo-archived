@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    directory:
+      recurse: true
+    path: applications/staging
+    repoURL: https://github.com/yuya-takeyama/gitops-repo.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

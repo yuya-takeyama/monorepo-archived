@@ -1,0 +1,46 @@
+name: actions / build-manifest
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/build-manifest/**
+      - .github/workflows/actions--build-manifest.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/build-manifest/**
+      - .github/workflows/actions--build-manifest.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/build-manifest
+        with:
+          service-name: service-foo
+          overlay: staging
+          namespace: pr-123
+          image-tag: ghcr.io/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
+      - name: Check the result of service-foo
+        run: |
+          diff -u \
+            .github/actions/build-manifest/test/service-foo-expected-result.yaml \
+            gitops-repo/staging/pr-123/service-foo/manifest.yaml
+      - uses: ./.github/actions/build-manifest
+        with:
+          service-name: ingress
+          overlay: staging
+          namespace: pr-123
+      - name: Check the result of ingress
+        run: |
+          diff -u \
+            .github/actions/build-manifest/test/ingress-expected-result.yaml \
+            gitops-repo/staging/pr-123/ingress/manifest.yaml
