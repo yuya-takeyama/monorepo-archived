@@ -48,6 +48,7 @@ jobs:
           overlay: staging
           namespace: pr-123
           github-sha: deadbeef
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of ingress
         run: |
           diff -u \
