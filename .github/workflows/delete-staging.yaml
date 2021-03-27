@@ -9,16 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
+      - uses: actions/checkout@v2
         with:
-          repository: yuya-takeyama/gitops-repo
+          repository: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout }}
           ref: master
-          path: gitops-repo
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - run: |
           pr_number="${{ github.event.number }}"
           branch="delete-staging/$(uuidgen)"
 
-          cd gitops-repo
+          cd "${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}"
           rm -rf "applications/staging/pr-${pr_number}"
           rm -rf "staging/pr-${pr_number}"
 
