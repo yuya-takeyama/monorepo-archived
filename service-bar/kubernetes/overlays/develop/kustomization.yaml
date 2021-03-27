@@ -1,2 +1,16 @@
-bases:
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
 - ../../base
+images:
+- name: service-bar
+  newName: ghcr.io/yuya-takeyama/monorepo/service-bar
+  newTag: develop.0f7b976632beff0ce30f3146b1b657aa46b25e39
+configMapGenerator:
+- behavior: create
+  literals:
+  - NAMESPACE=develop
+  - SERVICE_NAME=service-bar
+  - OVERLAY=develop
+  - GITHUB_SHA=0f7b976632beff0ce30f3146b1b657aa46b25e39
+  name: service-bar-metadata
