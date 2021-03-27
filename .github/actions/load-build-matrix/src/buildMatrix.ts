@@ -11,7 +11,7 @@ export type BuildParams = {
 };
 
 export const getBuildMatrix = (ctx: Context): BuildMatrix => {
-  const services = ['ingress', 'service-foo', 'service-bar'];
+  const services = ['ingress', 'service-foo', 'service-bar', 'frontend'];
   const branch = getBranch(ctx);
   const buildParams = getBuildParams(ctx, branch);
 

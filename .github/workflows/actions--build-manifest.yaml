@@ -8,6 +8,8 @@ on:
     paths:
       - .github/actions/build-manifest/**
       - .github/workflows/actions--build-manifest.yaml
+      - service-foo/ingress/**
+      - service-foo/kubernetes/**
 
   push:
     branches:
@@ -17,6 +19,8 @@ on:
     paths:
       - .github/actions/build-manifest/**
       - .github/workflows/actions--build-manifest.yaml
+      - service-foo/ingress/**
+      - service-foo/kubernetes/**
 
 jobs:
   test:
