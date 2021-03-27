@@ -10,6 +10,11 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <p>
+          namespace: {process.env.NAMESPACE}
+          /
+          overlay: {process.env.OVERLAY}
+        </p>
         <a
           className="App-link"
           href="https://reactjs.org"
