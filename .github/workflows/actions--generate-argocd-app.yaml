@@ -29,6 +29,7 @@ jobs:
         with:
           overlay: staging
           namespace: pr-123
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of pr-123
         run: |
           diff -u \
