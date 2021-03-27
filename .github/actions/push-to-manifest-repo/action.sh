@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -eux
 set -o pipefail
 
 gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
@@ -18,7 +18,7 @@ git config --global user.email "${GIT_USER_EMAIL}"
 git config --global user.name "${GIT_USER_NAME}"
 git add --all
 git commit -m "Update ${SERVICE_NAME}"
-git push -f origin "$branch"
+echo git push -f origin "$branch"
 
 pull_request_body=""
 if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
@@ -30,7 +30,7 @@ else
   pull_request_body="From ${origin_branch} branch"
 fi
 
-gh pr create \
+echo gh pr create \
   --title "Update ${SERVICE_NAME} in ${NAMESPACE}" \
   --body "${pull_request_body}"
-gh pr merge --merge
+echo gh pr merge --merge
