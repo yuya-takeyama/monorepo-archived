@@ -1,0 +1,45 @@
+apiVersion: v1
+data:
+  GITHUB_SHA: 20aed7e0bd4f2cb6456ccfb0cf2e06ef12a94552
+  NAMESPACE: develop
+  OVERLAY: develop
+  SERVICE_NAME: frontend
+kind: ConfigMap
+metadata:
+  name: frontend-metadata-t9t959gm82
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  ports:
+  - name: 80-80
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: ghcr.io/yuya-takeyama/monorepo/frontend:develop.20aed7e0bd4f2cb6456ccfb0cf2e06ef12a94552
+        name: frontend
