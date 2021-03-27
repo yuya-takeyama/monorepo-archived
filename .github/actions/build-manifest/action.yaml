@@ -21,7 +21,7 @@ inputs:
     required: true
 
 runs:
-  using: 'composite'
+  using: composite
   steps:
     - run: |
         SERVICE_NAME="${{ inputs.service-name }}" \
