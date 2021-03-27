@@ -5,12 +5,12 @@ resources:
 images:
 - name: ingress
   newName: ghcr.io/yuya-takeyama/monorepo/ingress
-  newTag: pr-37.3b7fe2d34a5ebf0092ee02ecd332a83827c12d55
+  newTag: pr-73.5fbbed2a4c9709fa788f3acd47dc4a91adb41faf
 configMapGenerator:
 - behavior: create
   literals:
-  - NAMESPACE=pr-37
+  - NAMESPACE=pr-73
   - SERVICE_NAME=ingress
   - OVERLAY=staging
-  - GITHUB_SHA=3b7fe2d34a5ebf0092ee02ecd332a83827c12d55
+  - GITHUB_SHA=5fbbed2a4c9709fa788f3acd47dc4a91adb41faf
   name: ingress-metadata
