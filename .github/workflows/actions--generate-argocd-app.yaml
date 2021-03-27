@@ -23,24 +23,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
       - uses: ./.github/actions/generate-argocd-app
         with:
           overlay: staging
           namespace: pr-123
+          repo-url: ${{ fromJSON(steps.config.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of pr-123
         run: |
           diff -u \
             .github/actions/generate-argocd-app/test/staging/application.yaml \
-            gitops-repo/applications/staging/application.yaml
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/applications/staging/application.yaml
           diff -u \
             .github/actions/generate-argocd-app/test/staging/pr-123/application.yaml \
-            gitops-repo/applications/staging/pr-123/application.yaml
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/applications/staging/pr-123/application.yaml
       - uses: ./.github/actions/generate-argocd-app
         with:
           overlay: production
           namespace: production
+          repo-url: ${{ fromJSON(steps.config.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of production
         run: |
           diff -u \
             .github/actions/generate-argocd-app/test/production/application.yaml \
-            gitops-repo/applications/production/application.yaml
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/applications/production/application.yaml

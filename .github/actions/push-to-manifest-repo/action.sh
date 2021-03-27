@@ -3,11 +3,11 @@
 set -eu
 set -o pipefail
 
-gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"
+gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 
 cd "$gitops_repo_dir"
 
-if [ -z $(git status --porcelain) ]; then
+if [ -z "$(git status --porcelain)" ]; then
   echo "Nothing to commit"
   exit
 fi

@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
       - uses: ./.github/actions/build-manifest
         with:
           service-name: service-foo
@@ -34,19 +36,21 @@ jobs:
           namespace: pr-123
           image-tag: ghcr.io/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
           github-sha: deadbeef
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of service-foo
         run: |
           diff -u \
             .github/actions/build-manifest/test/service-foo-expected-result.yaml \
-            gitops-repo/staging/pr-123/service-foo/manifest.yaml
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/staging/pr-123/service-foo/manifest.yaml
       - uses: ./.github/actions/build-manifest
         with:
           service-name: ingress
           overlay: staging
           namespace: pr-123
           github-sha: deadbeef
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - name: Check the result of ingress
         run: |
           diff -u \
             .github/actions/build-manifest/test/ingress-expected-result.yaml \
-            gitops-repo/staging/pr-123/ingress/manifest.yaml
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/staging/pr-123/ingress/manifest.yaml

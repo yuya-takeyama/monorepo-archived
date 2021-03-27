@@ -7,6 +7,11 @@ inputs:
   namespace:
     description: Kubernetes namespace to deploy to
     required: true
+  repo-url:
+    description: Repository URL to where Argo CD pull from
+  manifest-path:
+    description: Path to store manifests
+    required: true
 
 runs:
   using: 'composite'
@@ -14,5 +19,7 @@ runs:
     - run: |
         OVERLAY="${{ inputs.overlay }}" \
           NAMESPACE="${{ inputs.namespace }}" \
+          REPO_URL="${{ inputs.repo-url }}" \
+          MANIFEST_PATH="${{ inputs.manifest-path }}" \
           ${{ github.action_path }}/action.sh
       shell: bash
