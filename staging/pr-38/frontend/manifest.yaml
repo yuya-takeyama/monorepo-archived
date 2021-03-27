@@ -1,0 +1,45 @@
+apiVersion: v1
+data:
+  GITHUB_SHA: 00364684957ef6d2ed663a34dab9e46bc2dcb6e2
+  NAMESPACE: pr-38
+  OVERLAY: staging
+  SERVICE_NAME: frontend
+kind: ConfigMap
+metadata:
+  name: frontend-metadata-m92697g87h
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  ports:
+  - name: 80-80
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: ghcr.io/yuya-takeyama/monorepo/frontend:pr-38.00364684957ef6d2ed663a34dab9e46bc2dcb6e2
+        name: frontend
