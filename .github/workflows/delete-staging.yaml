@@ -18,29 +18,16 @@ jobs:
           path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - run: |
-          pr_number="${{ github.event.number }}"
-          branch="delete-staging/$(uuidgen)"
-
           cd "${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}"
+          pr_number="${{ github.event.number }}"
           rm -rf "applications/staging/pr-${pr_number}"
           rm -rf "staging/pr-${pr_number}"
-
-          if [ -z $(git status --porcelain) ]; then
-            echo "Nothing to commit"
-            exit
-          fi
-
-          git checkout -b "$branch"
-          git config --global user.email "${GIT_USER_EMAIL}"
-          git config --global user.name "${GIT_USER_NAME}"
-          git add --all
-          git commit -m "Close staging pr-${pr_number}"
-          git push -f origin "$branch"
-          gh pr create \
-            --title "Remove staging pr-${pr_number}" \
-            --body "https://github.com/${GITHUB_REPOSITORY}/pull/${pr_number} has been closed."
-          gh pr merge --merge
-        env:
-          GIT_USER_EMAIL: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
-          GIT_USER_NAME: ${{ secrets.DEPLOY_GIT_USER_NAME }}
-          GITHUB_TOKEN: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - uses: ./.github/actions/push-to-manifest-repo
+        with:
+          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          branch-prefix: delete-staging
+          commit-message: Remove staging pr-${{ github.event.number }}
+          pull-request-title: Remove staging pr-${{ github.event.number }}
+          pull-request-body: https://github.com/${{ github.repository }}/pull/${{ github.event.number }} has been closed.

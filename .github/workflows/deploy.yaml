@@ -47,14 +47,17 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           repo-url: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.http-url }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+      - id: pull-request-body
+        uses: ./.github/actions/generate-pull-request-body
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          service-name: applications
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
-          git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
-          git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          branch-prefix: applications
+          commit-message: Update applications in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-title: Update applications in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-body: ${{ steps.pull-request-body.outputs.result }}
 
   build-and-push:
     name: 'build-and-push / ${{ matrix.service-name }} / ${{ fromJSON(matrix.build-params).overlay }}'
@@ -140,11 +143,14 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           image-tag: ${{ steps.image-tags.outputs.image-tags }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+      - id: pull-request-body
+        uses: ./.github/actions/generate-pull-request-body
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          service-name: ${{ matrix.service-name }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
-          git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
-          git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          branch-prefix: ${{ matrix.service-name }}
+          commit-message: Update ${{ matrix.service-name }} in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-title: Update ${{ matrix.service-name }} in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-body: ${{ steps.pull-request-body.outputs.result }}

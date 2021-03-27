@@ -12,25 +12,13 @@ if [ -z "$(git status --porcelain)" ]; then
   exit
 fi
 
-branch="${SERVICE_NAME}/$(uuidgen)"
+branch="${BRANCH_PREFIX}/$(uuidgen)"
 git checkout -b "$branch"
-git config --global user.email "${GIT_USER_EMAIL}"
-git config --global user.name "${GIT_USER_NAME}"
+git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+git config --global user.name "github-actions[bot]"
 git add --all
-git commit -m "Update ${SERVICE_NAME}"
+git commit -m "${COMMIT_MESSAGE}"
 git push -f origin "$branch"
 
-pull_request_body=""
-if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-  pr_number="${GITHUB_REF#"refs/pull/"}"
-  pr_number="${pr_number%"/merge"}"
-  pull_request_body="From https://github.com/${GITHUB_REPOSITORY}/pull/${pr_number}"
-else
-  origin_branch="${GITHUB_REF#"refs/heads/"}"
-  pull_request_body="From ${origin_branch} branch"
-fi
-
-gh pr create \
-  --title "Update ${SERVICE_NAME} in ${NAMESPACE}" \
-  --body "${pull_request_body}"
+gh pr create --title "${PULL_REQUEST_TITLE}" --body "${PULL_REQUEST_BODY}"
 gh pr merge --merge
