@@ -1,0 +1,4 @@
+manifest-repository:
+  http-url: https://github.com/yuya-takeyama/gitops-repo.git
+  checkout: yuya-takeyama/gitops-repo
+  checkout-path: .manifests
