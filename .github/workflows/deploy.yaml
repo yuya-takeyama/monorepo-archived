@@ -103,6 +103,9 @@ jobs:
         with:
           push: true
           context: ${{ matrix.service-name }}
+          build-args: |
+            OVERLAY=${{ fromJSON(matrix.build-params).overlay }}
+            NAMESPACE=${{ fromJSON(matrix.build-params).namespace }}
           tags: ${{ steps.image-tags.outputs.image-tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
