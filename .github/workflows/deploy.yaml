@@ -48,17 +48,7 @@ jobs:
           repo-url: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.http-url }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
       - id: pull-request-body
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            if (context.eventName == 'pull_request') {
-              const prNumber = context.payload.number;
-              return `From https://github.com/${{ github.repository }}/pull/${prNumber}`;
-            } else {
-              return `From ${'${{ github.ref }}'.replace(/^refs\/heads\//, '')} branch`;
-            }
+        uses: ./.github/actions/generate-pull-request-body
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
@@ -154,17 +144,7 @@ jobs:
           image-tag: ${{ steps.image-tags.outputs.image-tags }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
       - id: pull-request-body
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            if (context.eventName == 'pull_request') {
-              const prNumber = context.payload.number;
-              return `From https://github.com/${{ github.repository }}/pull/${prNumber}`;
-            } else {
-              return `From ${'${{ github.ref }}'.replace(/^refs\/heads\//, '')} branch`;
-            }
+        uses: ./.github/actions/generate-pull-request-body
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}

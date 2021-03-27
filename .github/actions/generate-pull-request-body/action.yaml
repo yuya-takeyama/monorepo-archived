@@ -1,0 +1,24 @@
+name: generate-pull-request-body
+
+outputs:
+  result:
+    description: Pull Request body
+    value: ${{ steps.action.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    - id: action
+      run: |
+        pull_request_body=""
+        if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+          pr_number="${GITHUB_REF#"refs/pull/"}"
+          pr_number="${pr_number%"/merge"}"
+          pull_request_body="From https://github.com/${GITHUB_REPOSITORY}/pull/${pr_number}"
+        else
+          origin_branch="${GITHUB_REF#"refs/heads/"}"
+          pull_request_body="From ${origin_branch} branch"
+        fi
+
+        echo "::set-output name=result::${pull_request_body}"
+      shell: bash
