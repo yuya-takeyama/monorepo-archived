@@ -10,14 +10,20 @@ inputs:
   namespace:
     description: Kubernetes namespace to deploy to
     required: true
-  git-user-email:
-    description: Git user email
-    required: true
-  git-user-name:
-    description: Git user name
-    required: true
   manifest-path:
     description: Path to store manifests
+    required: true
+  branch-prefix:
+    description: Prefix of branch name
+    required: true
+  commit-message:
+    description: Commit message
+    required: true
+  pull-request-title:
+    description: Title of Pull Request
+    required: true
+  pull-request-body:
+    description: Body of Pull Request
     required: true
 
 runs:
@@ -27,8 +33,10 @@ runs:
         SERVICE_NAME="${{ inputs.service-name }}" \
           NAMESPACE="${{ inputs.namespace }}" \
           GITHUB_TOKEN="${{ inputs.github-token }}" \
-          GIT_USER_EMAIL="${{ inputs.git-user-email }}" \
-          GIT_USER_NAME="${{ inputs.git-user-name }}" \
           MANIFEST_PATH="${{ inputs.manifest-path }}" \
+          BRANCH_PREFIX="${{ inputs.branch-prefix }}" \
+          COMMIT_MESSAGE="${{ inputs.commit-message }}" \
+          PULL_REQUEST_TITLE="${{ inputs.pull-request-title }}" \
+          PULL_REQUEST_BODY="${{ inputs.pull-request-body }}" \
           ${{ github.action_path }}/action.sh
       shell: bash
