@@ -13,35 +13,40 @@ on:
       - master
 
 jobs:
-  load-build-matrix:
+  setup:
     runs-on: ubuntu-latest
     outputs:
+      config: ${{ steps.config.outputs.config }}
       matrix: ${{ steps.load-build-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
       - id: load-build-matrix
         uses: ./.github/actions/load-build-matrix
 
   push-argocd-app:
     name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
-    needs: load-build-matrix
+    needs: setup
     strategy:
       fail-fast: false
       matrix:
-        build-params: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).buildParams }}
+        build-params: ${{ fromJSON(needs.setup.outputs.matrix).buildParams }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: yuya-takeyama/gitops-repo
+          repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
           ref: master
-          path: gitops-repo
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - uses: ./.github/actions/generate-argocd-app
         with:
           overlay: ${{ fromJSON(matrix.build-params).overlay }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
+          repo-url: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
@@ -49,15 +54,16 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
 
   build-and-push:
     name: 'build-and-push / ${{ matrix.service-name }} / ${{ fromJSON(matrix.build-params).overlay }}'
-    needs: load-build-matrix
+    needs: setup
     strategy:
       fail-fast: false
       matrix:
-        service-name: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).services }}
-        build-params: ${{ fromJSON(needs.load-build-matrix.outputs.matrix).buildParams }}
+        service-name: ${{ fromJSON(needs.setup.outputs.matrix).services }}
+        build-params: ${{ fromJSON(needs.setup.outputs.matrix).buildParams }}
     runs-on: ubuntu-latest
     steps:
       # Prepare
@@ -123,9 +129,9 @@ jobs:
           mkdir /tmp/kustomize
       - uses: actions/checkout@v2
         with:
-          repository: yuya-takeyama/gitops-repo
+          repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
           ref: master
-          path: gitops-repo
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - uses: ./.github/actions/build-manifest
         with:
@@ -133,6 +139,7 @@ jobs:
           overlay: ${{ fromJSON(matrix.build-params).overlay }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           image-tag: ${{ steps.image-tags.outputs.image-tags }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
@@ -140,3 +147,4 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}

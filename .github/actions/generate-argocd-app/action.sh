@@ -12,7 +12,7 @@ else
   path="${NAMESPACE}"
 fi
 
-gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"
+gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 
 mkdir -p "${gitops_repo_dir}/applications/${path}"
 manifest_file="${gitops_repo_dir}/applications/${path}/application.yaml"
@@ -34,7 +34,7 @@ spec:
     directory:
       recurse: true
     path: ${path}
-    repoURL: https://github.com/yuya-takeyama/gitops-repo.git
+    repoURL: ${REPO_URL}
     targetRevision: master
   syncPolicy:
     automated:
@@ -73,7 +73,7 @@ spec:
     directory:
       recurse: true
     path: applications/staging
-    repoURL: https://github.com/yuya-takeyama/gitops-repo.git
+    repoURL: ${REPO_URL}
     targetRevision: master
   syncPolicy:
     automated:

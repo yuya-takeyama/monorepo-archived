@@ -14,7 +14,11 @@ inputs:
     description: Docker image tag
   github-sha:
     description: $GITHUB_SHA
+    required: true
     default: ${{ github.sha }}
+  manifest-path:
+    description: Path to store manifests
+    required: true
 
 runs:
   using: 'composite'
@@ -25,5 +29,6 @@ runs:
           NAMESPACE="${{ inputs.namespace }}" \
           IMAGE_TAG="${{ inputs.image-tag }}" \
           GITHUB_SHA="${{ inputs.github-sha }}" \
+          MANIFEST_PATH="${{ inputs.manifest-path }}" \
           ${{ github.action_path }}/action.sh
       shell: bash
