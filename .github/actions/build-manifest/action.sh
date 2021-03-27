@@ -17,7 +17,7 @@ kustomize edit add configmap "${SERVICE_NAME}-metadata" \
   --behavior=create
 
 input_dir="${GITHUB_WORKSPACE}/${SERVICE_NAME}/kubernetes/overlays/${OVERLAY}"
-gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"
+gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 output_dir=""
 
 if [[ "${OVERLAY}" == "staging" ]]; then

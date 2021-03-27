@@ -1,0 +1,9 @@
+name: config
+
+outputs:
+  config:
+    description: Config JSON
+
+runs:
+  using: 'node12'
+  main: 'index.js'
