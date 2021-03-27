@@ -54,6 +54,7 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
 
   build-and-push:
     name: 'build-and-push / ${{ matrix.service-name }} / ${{ fromJSON(matrix.build-params).overlay }}'
@@ -145,3 +146,4 @@ jobs:
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
           git-user-email: ${{ secrets.DEPLOY_GIT_USER_EMAIL }}
           git-user-name: ${{ secrets.DEPLOY_GIT_USER_NAME }}
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
