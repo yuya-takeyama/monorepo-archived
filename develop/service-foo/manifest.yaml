@@ -1,0 +1,48 @@
+apiVersion: v1
+data:
+  GITHUB_SHA: 30ee192af0855aac3d78f0c77aabefd32114faf5
+  NAMESPACE: develop
+  OVERLAY: develop
+  SERVICE_NAME: service-foo
+kind: ConfigMap
+metadata:
+  name: service-foo-metadata-tbbfmmfg5d
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-foo
+  name: service-foo
+spec:
+  ports:
+  - name: 80-4567
+    port: 80
+    protocol: TCP
+    targetPort: 4567
+  selector:
+    app: service-foo
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: service-foo
+  name: service-foo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-foo
+  template:
+    metadata:
+      labels:
+        app: service-foo
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: service-foo-metadata-tbbfmmfg5d
+        image: ghcr.io/yuya-takeyama/monorepo/service-foo:develop.30ee192af0855aac3d78f0c77aabefd32114faf5
+        name: service-foo
