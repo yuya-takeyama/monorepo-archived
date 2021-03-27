@@ -54,5 +54,3 @@ jobs:
           diff -u \
             .github/actions/build-manifest/test/ingress-expected-result.yaml \
             ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/staging/pr-123/ingress/manifest.yaml
-            hlsearch
-
