@@ -10,8 +10,7 @@ spec:
         backend:
           serviceName: frontend
           servicePort: 80
-      - path: /static/
-        pathType: Prefix
+      - path: /static/*
         backend:
           serviceName: frontend
           servicePort: 80
