@@ -2,15 +2,3 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ../../base
-images:
-- name: frontend
-  newName: ghcr.io/yuya-takeyama/monorepo/frontend
-  newTag: develop.00364684957ef6d2ed663a34dab9e46bc2dcb6e2
-configMapGenerator:
-- behavior: create
-  literals:
-  - NAMESPACE=develop
-  - SERVICE_NAME=frontend
-  - OVERLAY=develop
-  - GITHUB_SHA=00364684957ef6d2ed663a34dab9e46bc2dcb6e2
-  name: frontend-metadata
