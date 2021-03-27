@@ -25,7 +25,6 @@ jobs:
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          namespace: ${{ fromJSON(matrix.build-params).namespace }}
           manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
           branch-prefix: delete-staging
           commit-message: Remove staging pr-${{ github.event.number }}

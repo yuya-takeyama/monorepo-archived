@@ -4,12 +4,6 @@ inputs:
   github-token:
     description: GitHub API Token to interact with GitHub repo
     required: true
-  service-name:
-    description: Service name to build
-    required: true
-  namespace:
-    description: Kubernetes namespace to deploy to
-    required: true
   manifest-path:
     description: Path to store manifests
     required: true
@@ -30,9 +24,7 @@ runs:
   using: composite
   steps:
     - run: |
-        SERVICE_NAME="${{ inputs.service-name }}" \
-          NAMESPACE="${{ inputs.namespace }}" \
-          GITHUB_TOKEN="${{ inputs.github-token }}" \
+        GITHUB_TOKEN="${{ inputs.github-token }}" \
           MANIFEST_PATH="${{ inputs.manifest-path }}" \
           BRANCH_PREFIX="${{ inputs.branch-prefix }}" \
           COMMIT_MESSAGE="${{ inputs.commit-message }}" \

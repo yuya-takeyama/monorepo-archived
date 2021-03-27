@@ -52,7 +52,6 @@ jobs:
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          namespace: ${{ fromJSON(matrix.build-params).namespace }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           branch-prefix: applications
           commit-message: Update applications in ${{ fromJSON(matrix.build-params).namespace }}
@@ -148,7 +147,6 @@ jobs:
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          namespace: ${{ fromJSON(matrix.build-params).namespace }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           branch-prefix: ${{ matrix.service-name }}
           commit-message: Update ${{ matrix.service-name }} in ${{ fromJSON(matrix.build-params).namespace }}
