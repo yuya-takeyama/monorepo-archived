@@ -9,6 +9,13 @@ if [ -n "$IMAGE_TAG" ]; then
   kustomize edit set image "${SERVICE_NAME}=${IMAGE_TAG}"
 fi
 
+kustomize edit add configmap "${SERVICE_NAME}-metadata" \
+  --from-literal=NAMESPACE="${NAMESPACE}" \
+  --from-literal=SERVICE_NAME="${SERVICE_NAME}" \
+  --from-literal=OVERLAY="${OVERLAY}" \
+  --from-literal=GITHUB_SHA="$GITHUB_SHA" \
+  --behavior=create
+
 input_dir="${GITHUB_WORKSPACE}/${SERVICE_NAME}/kubernetes/overlays/${OVERLAY}"
 gitops_repo_dir="${GITHUB_WORKSPACE}/gitops-repo"
 output_dir=""

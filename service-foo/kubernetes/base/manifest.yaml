@@ -17,6 +17,9 @@ spec:
       containers:
       - image: service-foo
         name: service-foo
+        envFrom:
+        - configMapRef:
+            name: service-foo-metadata
 ---
 apiVersion: v1
 kind: Service

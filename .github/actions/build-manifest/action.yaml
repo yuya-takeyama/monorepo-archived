@@ -12,6 +12,9 @@ inputs:
     required: true
   image-tag:
     description: Docker image tag
+  github-sha:
+    description: $GITHUB_SHA
+    default: ${{ github.sha }}
 
 runs:
   using: 'composite'
@@ -21,5 +24,6 @@ runs:
           OVERLAY="${{ inputs.overlay }}" \
           NAMESPACE="${{ inputs.namespace }}" \
           IMAGE_TAG="${{ inputs.image-tag }}" \
+          GITHUB_SHA="${{ inputs.github-sha }}" \
           ${{ github.action_path }}/action.sh
       shell: bash
