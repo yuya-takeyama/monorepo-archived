@@ -29,6 +29,7 @@ jobs:
           overlay: staging
           namespace: pr-123
           image-tag: ghcr.io/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
+          github-sha: deadbeef
       - name: Check the result of service-foo
         run: |
           diff -u \
@@ -39,6 +40,7 @@ jobs:
           service-name: ingress
           overlay: staging
           namespace: pr-123
+          github-sha: deadbeef
       - name: Check the result of ingress
         run: |
           diff -u \
