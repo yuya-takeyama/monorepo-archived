@@ -106,6 +106,8 @@ jobs:
           build-args: |
             OVERLAY=${{ fromJSON(matrix.build-params).overlay }}
             NAMESPACE=${{ fromJSON(matrix.build-params).namespace }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
           tags: ${{ steps.image-tags.outputs.image-tags }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
