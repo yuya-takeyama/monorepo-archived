@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "This is Bar Service, Ver. 2021/03/22!")
 	})
 
