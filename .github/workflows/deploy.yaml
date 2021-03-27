@@ -44,6 +44,8 @@ jobs:
         with:
           overlay: ${{ fromJSON(matrix.build-params).overlay }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
+          repo-url: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
