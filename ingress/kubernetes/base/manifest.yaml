@@ -8,6 +8,10 @@ spec:
       paths:
       - path: /
         backend:
+          serviceName: frontend
+          servicePort: 80
+      - path: /foo
+        backend:
           serviceName: service-foo
           servicePort: 80
       - path: /bar
