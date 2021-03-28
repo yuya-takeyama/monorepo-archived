@@ -30,4 +30,4 @@ spec:
     - name: frontend
       port: 80
   virtualhost:
-    fqdn: pr-103.gke.yuyat.jp
+    fqdn: pr-123.gke.yuyat.jp

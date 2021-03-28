@@ -1,11 +1,32 @@
 import { Inputs } from './inputs';
 import { exec } from '@actions/exec';
 import { mkdirSync, writeFileSync } from 'fs';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import envsub from 'envsub';
+import originalGlob from 'glob';
+import { promisify } from 'util';
+
+const glob = promisify(originalGlob);
 
 export const build = async (inputs: Inputs): Promise<void> => {
+  const kubernetesDir = `${process.env.GITHUB_WORKSPACE}/${inputs.serviceName}/kubernetes`;
   const inputDir = `${process.env.GITHUB_WORKSPACE}/${inputs.serviceName}/kubernetes/overlays/${inputs.overlay}`;
   const manifestDir = `${process.env.GITHUB_WORKSPACE}/${inputs.manifestPath}`;
   const outputDir = getOutputDir(inputs, manifestDir);
+
+  process.chdir(kubernetesDir);
+
+  const files = await glob('**/*.yaml');
+  const promises = files.map((file: string) =>
+    envsub({
+      templateFile: file,
+      options: {
+        envs: [{ name: 'NAMESPACE', value: inputs.namespace }],
+      },
+    }),
+  );
+  await Promise.all(promises);
 
   mkdirSync(outputDir, { recursive: true });
   process.chdir(inputDir);
