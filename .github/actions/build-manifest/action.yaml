@@ -1,4 +1,5 @@
 name: build-manifest
+description: Build Kubernetes manifest using kustomize and envsub
 
 inputs:
   service-name:
@@ -12,6 +13,7 @@ inputs:
     required: true
   image-tag:
     description: Docker image tag
+    required: false
   github-sha:
     description: $GITHUB_SHA
     required: true
@@ -21,14 +23,5 @@ inputs:
     required: true
 
 runs:
-  using: composite
-  steps:
-    - run: |
-        SERVICE_NAME="${{ inputs.service-name }}" \
-          OVERLAY="${{ inputs.overlay }}" \
-          NAMESPACE="${{ inputs.namespace }}" \
-          IMAGE_TAG="${{ inputs.image-tag }}" \
-          GITHUB_SHA="${{ inputs.github-sha }}" \
-          MANIFEST_PATH="${{ inputs.manifest-path }}" \
-          ${{ github.action_path }}/action.sh
-      shell: bash
+  using: 'node12'
+  main: dist/index.js
