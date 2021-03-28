@@ -8,23 +8,26 @@ kind: ConfigMap
 metadata:
   name: ingress-metadata-6hf6242dbb
 ---
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
 metadata:
   name: ingress
 spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: frontend
-          servicePort: 80
-        path: /
-      - backend:
-          serviceName: service-foo
-          servicePort: 80
-        path: /foo
-      - backend:
-          serviceName: service-bar
-          servicePort: 80
-        path: /bar
+  routes:
+  - conditions:
+    - prefix: /foo
+    services:
+    - name: service-foo
+      port: 80
+  - conditions:
+    - prefix: /bar
+    services:
+    - name: service-bar
+      port: 80
+  - conditions:
+    - prefix: /
+    services:
+    - name: frontend
+      port: 80
+  virtualhost:
+    fqdn: pr-123.gke.yuyat.jp
