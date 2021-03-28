@@ -26,6 +26,10 @@ spec:
       port: 80
   - conditions:
     - prefix: /
+    requestHeadersPolicy:
+      set:
+      - name: Host
+        value: frontend
     services:
     - name: frontend
       port: 80
