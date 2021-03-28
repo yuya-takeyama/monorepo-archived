@@ -30,7 +30,19 @@ metadata:
 spec:
   routes:
     - conditions:
+      - prefix: /foo
+      services:
+        - name: service-foo
+          port: 80
+    - conditions:
+      - prefix: /bar
+      services:
+        - name: service-bar
+          port: 80
+    - conditions:
       - prefix: /
       services:
         - name: frontend
           port: 80
+  virtualhost:
+    fqdn: pr-103.gke.yuyat.jp
