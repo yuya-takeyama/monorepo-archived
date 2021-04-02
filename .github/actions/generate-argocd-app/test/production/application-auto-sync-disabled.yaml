@@ -17,6 +17,6 @@ spec:
     repoURL: https://github.com/yuya-takeyama/monorepo-manifests.git
     targetRevision: master
   syncPolicy:
-    automated: { prune: true, selfHeal: true }
+    
     syncOptions:
     - CreateNamespace=true

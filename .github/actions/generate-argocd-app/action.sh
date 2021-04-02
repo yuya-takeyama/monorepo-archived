@@ -17,6 +17,11 @@ manifests_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 mkdir -p "${manifests_dir}/applications/${path}"
 manifest_file="${manifests_dir}/applications/${path}/application.yaml"
 
+sync_policy=""
+if [[ "$ENABLE_AUTO_SYNC" == "true" ]]; then
+  sync_policy="automated: { prune: true, selfHeal: true }"
+fi
+
 cat << EOS > "${manifest_file}"
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -37,9 +42,7 @@ spec:
     repoURL: ${REPO_URL}
     targetRevision: master
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    ${sync_policy}
     syncOptions:
     - CreateNamespace=true
 EOS
