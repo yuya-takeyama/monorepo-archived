@@ -1,4 +1,4 @@
 manifest-repository:
-  http-url: https://github.com/yuya-takeyama/gitops-repo.git
-  checkout: yuya-takeyama/gitops-repo
+  http-url: https://github.com/yuya-takeyama/monorepo-manifests.git
+  checkout: yuya-takeyama/monorepo-manifests
   checkout-path: .manifests

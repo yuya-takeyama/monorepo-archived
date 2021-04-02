@@ -14,7 +14,7 @@ spec:
     directory:
       recurse: true
     path: production
-    repoURL: https://github.com/yuya-takeyama/gitops-repo.git
+    repoURL: https://github.com/yuya-takeyama/monorepo-manifests.git
     targetRevision: master
   syncPolicy:
     automated:
