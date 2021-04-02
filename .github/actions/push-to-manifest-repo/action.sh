@@ -3,9 +3,9 @@
 set -eu
 set -o pipefail
 
-gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
+manifests_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 
-cd "$gitops_repo_dir"
+cd "$manifests_dir"
 
 if [ -z "$(git status --porcelain)" ]; then
   echo "Nothing to commit"

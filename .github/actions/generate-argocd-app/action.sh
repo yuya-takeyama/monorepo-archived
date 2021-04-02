@@ -12,10 +12,10 @@ else
   path="${NAMESPACE}"
 fi
 
-gitops_repo_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
+manifests_dir="${GITHUB_WORKSPACE}/${MANIFEST_PATH}"
 
-mkdir -p "${gitops_repo_dir}/applications/${path}"
-manifest_file="${gitops_repo_dir}/applications/${path}/application.yaml"
+mkdir -p "${manifests_dir}/applications/${path}"
+manifest_file="${manifests_dir}/applications/${path}/application.yaml"
 
 cat << EOS > "${manifest_file}"
 apiVersion: argoproj.io/v1alpha1
@@ -44,7 +44,7 @@ spec:
     - CreateNamespace=true
 EOS
 
-manifest_dir="${gitops_repo_dir}/${path}"
+manifest_dir="${manifests_dir}/${path}"
 namespace_file="${manifest_dir}/namespace.yaml"
 
 mkdir -p "${manifest_dir}"
@@ -56,7 +56,7 @@ metadata:
 EOS
 
 if [[ "$OVERLAY" == "staging" ]]; then
-staging_toplevel_manifest_file="${gitops_repo_dir}/applications/staging/application.yaml"
+staging_toplevel_manifest_file="${manifests_dir}/applications/staging/application.yaml"
   cat << EOS > "${staging_toplevel_manifest_file}"
 apiVersion: argoproj.io/v1alpha1
 kind: Application
