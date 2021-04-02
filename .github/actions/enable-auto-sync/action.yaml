@@ -1,0 +1,10 @@
+name: enable-auto-sync
+description: Check if auto-sync should be enabled or not
+
+outputs:
+  result:
+    description: "'true' or 'false'"
+
+runs:
+  using: 'node12'
+  main: dist/index.js

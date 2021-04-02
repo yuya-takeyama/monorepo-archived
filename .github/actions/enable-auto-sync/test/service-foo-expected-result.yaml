@@ -1,0 +1,48 @@
+apiVersion: v1
+data:
+  GITHUB_SHA: deadbeef
+  NAMESPACE: pr-123
+  OVERLAY: staging
+  SERVICE_NAME: service-foo
+kind: ConfigMap
+metadata:
+  name: service-foo-metadata-9b9kd2gbmm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: service-foo
+  name: service-foo
+spec:
+  ports:
+  - name: 80-4567
+    port: 80
+    protocol: TCP
+    targetPort: 4567
+  selector:
+    app: service-foo
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: service-foo
+  name: service-foo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-foo
+  template:
+    metadata:
+      labels:
+        app: service-foo
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: service-foo-metadata-9b9kd2gbmm
+        image: ghcr.io/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
+        name: service-foo

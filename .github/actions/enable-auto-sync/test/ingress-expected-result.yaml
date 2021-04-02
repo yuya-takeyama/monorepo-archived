@@ -1,0 +1,37 @@
+apiVersion: v1
+data:
+  GITHUB_SHA: deadbeef
+  NAMESPACE: pr-123
+  OVERLAY: staging
+  SERVICE_NAME: ingress
+kind: ConfigMap
+metadata:
+  name: ingress-metadata-6hf6242dbb
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: ingress
+spec:
+  routes:
+  - conditions:
+    - prefix: /foo
+    services:
+    - name: service-foo
+      port: 80
+  - conditions:
+    - prefix: /bar
+    services:
+    - name: service-bar
+      port: 80
+  - conditions:
+    - prefix: /
+    requestHeadersPolicy:
+      set:
+      - name: Host
+        value: frontend
+    services:
+    - name: frontend
+      port: 80
+  virtualhost:
+    fqdn: pr-123.gke.yuyat.jp

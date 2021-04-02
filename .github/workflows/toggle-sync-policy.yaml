@@ -1,0 +1,57 @@
+name: toggle-sync-policy
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+
+jobs:
+  setup:
+    if: github.event.label.name == 'disable-auto-sync'
+    runs-on: ubuntu-latest
+    outputs:
+      config: ${{ steps.config.outputs.config }}
+      matrix: ${{ steps.load-build-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
+      - id: load-build-matrix
+        uses: ./.github/actions/load-build-matrix
+
+  push-argocd-app:
+    name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
+    needs: setup
+    strategy:
+      fail-fast: false
+      matrix:
+        build-params: ${{ fromJSON(needs.setup.outputs.matrix).buildParams }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
+          ref: master
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - id: enable-auto-sync
+        uses: ./.github/actions/enable-auto-sync
+      - uses: ./.github/actions/generate-argocd-app
+        with:
+          overlay: ${{ fromJSON(matrix.build-params).overlay }}
+          namespace: ${{ fromJSON(matrix.build-params).namespace }}
+          repo-url: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          enable-auto-sync: ${{ steps.enable-auto-sync.outputs.result }}
+      - id: pull-request-body
+        uses: ./.github/actions/generate-pull-request-body
+      - uses: ./.github/actions/push-to-manifest-repo
+        with:
+          github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          branch-prefix: applications
+          commit-message: Update applications in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-title: Update applications in ${{ fromJSON(matrix.build-params).namespace }}
+          pull-request-body: ${{ steps.pull-request-body.outputs.result }}
