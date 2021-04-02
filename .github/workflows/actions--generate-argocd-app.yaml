@@ -50,3 +50,15 @@ jobs:
           diff -u \
             .github/actions/generate-argocd-app/test/production/application.yaml \
             ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/applications/production/application.yaml
+      - uses: ./.github/actions/generate-argocd-app
+        with:
+          overlay: production
+          namespace: production
+          repo-url: ${{ fromJSON(steps.config.outputs.config).manifest-repository.http-url }}
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
+          enable-auto-sync: 'false'
+      - name: Check the result of production with auto-sync disabled
+        run: |
+          diff -u \
+            .github/actions/generate-argocd-app/test/production/application-auto-sync-disabled.yaml \
+            ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}/applications/production/application.yaml
