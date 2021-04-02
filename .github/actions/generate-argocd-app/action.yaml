@@ -12,6 +12,10 @@ inputs:
   manifest-path:
     description: Path to store manifests
     required: true
+  enable-auto-sync:
+    description: Enable Auto Sync with syncPolicy of Argo CD
+    required: true
+    default: 'true'
 
 runs:
   using: composite
@@ -21,5 +25,6 @@ runs:
           NAMESPACE="${{ inputs.namespace }}" \
           REPO_URL="${{ inputs.repo-url }}" \
           MANIFEST_PATH="${{ inputs.manifest-path }}" \
+          ENABLE_AUTO_SYNC="${{ inputs.enable-auto-sync }}" \
           ${{ github.action_path }}/action.sh
       shell: bash
