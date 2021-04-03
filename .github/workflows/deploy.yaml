@@ -28,7 +28,7 @@ jobs:
       - id: docker-cache-version
         uses: actions/github-script@v3
         with:
-          script: return "v1"
+          script: return "v2"
           result-encoding: string
 
   push-argocd-app:
