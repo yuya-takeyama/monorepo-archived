@@ -44,5 +44,5 @@ spec:
       - envFrom:
         - configMapRef:
             name: service-foo-metadata-9b9kd2gbmm
-        image: ghcr.io/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
+        image: registry.example.com/yuya-takeyamma/monorepo/service-foo:pr-123.deadbeef
         name: service-foo

@@ -2,3 +2,7 @@ manifest-repository:
   http-url: https://github.com/yuya-takeyama/monorepo-manifests.git
   checkout: yuya-takeyama/monorepo-manifests
   checkout-path: .manifests
+container-registry:
+  registry: asia-northeast1-docker.pkg.dev
+  username: _json_key
+  image-name-prefix: asia-northeast1-docker.pkg.dev/intense-hour-308116/monorepo/
