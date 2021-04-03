@@ -90,9 +90,10 @@ jobs:
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-
+            ${{ runner.os }}-buildx-${{ matrix.service-name }}-
 
       # Build and push Docker image
       - name: Login to Container Registry
