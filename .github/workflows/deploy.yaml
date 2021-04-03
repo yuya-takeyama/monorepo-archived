@@ -131,9 +131,6 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       # Build and push Kubernetes manifest
-      - name: Prepare kustomize workspace
-        run: |
-          mkdir /tmp/kustomize
       - uses: actions/checkout@v2
         with:
           repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
