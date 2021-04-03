@@ -26,11 +26,12 @@ jobs:
       - id: action-result
         uses: ./.github/actions/generate-image-tags
         with:
+          image-name-prefix: registry.example.com/yuya-takeyama/monorepo/
           service-name: service-foo
           namespace: pr-123
           github-sha: deadbeef
       - name: Test action result
-        if: ${{ steps.action-result.outputs.image-tags != 'ghcr.io/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef' }}
+        if: ${{ steps.action-result.outputs.image-tags != 'registry.example.com/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef' }}
         run: |
           echo "Expected:"
           echo "$EXPECTED"
@@ -38,5 +39,5 @@ jobs:
           echo "$ACTUAL"
           exit 1
         env:
-          EXPECTED: ghcr.io/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef
+          EXPECTED: registry.example.com/yuya-takeyama/monorepo/service-foo:pr-123.deadbeef
           ACTUAL: ${{ steps.action-result.outputs.image-tags }}
