@@ -18,12 +18,18 @@ jobs:
     outputs:
       config: ${{ steps.config.outputs.config }}
       matrix: ${{ steps.load-build-matrix.outputs.matrix }}
+      docker-cache-version: ${{ steps.docker-cache-version.outputs.result }}
     steps:
       - uses: actions/checkout@v2
       - id: config
         uses: ./.github/actions/config
       - id: load-build-matrix
         uses: ./.github/actions/load-build-matrix
+      - id: docker-cache-version
+        uses: actions/github-script@v3
+        with:
+          script: return "v1"
+          result-encoding: string
 
   push-argocd-app:
     name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
@@ -90,10 +96,10 @@ jobs:
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
+          key: ${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-
-            ${{ runner.os }}-buildx-${{ matrix.service-name }}-
+            ${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-
+            ${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}-
 
       # Build and push Docker image
       - name: Login to Container Registry
