@@ -95,16 +95,17 @@ jobs:
             ${{ runner.os }}-buildx-
 
       # Build and push Docker image
-      - name: Login to GitHub Container Registry
+      - name: Login to Container Registry
         uses: docker/login-action@v1 
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.BUILD_GITHUB_TOKEN }}
+          registry: ${{ fromJSON(needs.setup.outputs.config).container-registry.registry }}
+          username: ${{ fromJSON(needs.setup.outputs.config).container-registry.username }}
+          password: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_JSON_KEY }}
       - id: image-tags
         uses: ./.github/actions/generate-image-tags
         with:
+          image-name-prefix: ${{ fromJSON(needs.setup.outputs.config).container-registry.image-name-prefix }}
           service-name: ${{ matrix.service-name }}
           namespace: ${{ fromJSON(matrix.build-params).namespace }}
       - name: Build and push
