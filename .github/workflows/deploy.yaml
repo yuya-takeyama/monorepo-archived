@@ -18,12 +18,18 @@ jobs:
     outputs:
       config: ${{ steps.config.outputs.config }}
       matrix: ${{ steps.load-build-matrix.outputs.matrix }}
+      docker-cache-version: ${{ steps.docker-cache-version.outputs.result }}
     steps:
       - uses: actions/checkout@v2
       - id: config
         uses: ./.github/actions/config
       - id: load-build-matrix
         uses: ./.github/actions/load-build-matrix
+      - id: docker-cache-version
+        uses: actions/github-script@v3
+        with:
+          script: return "v2"
+          result-encoding: string
 
   push-argocd-app:
     name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
@@ -85,15 +91,20 @@ jobs:
       - uses: imranismail/setup-kustomize@v1
         with:
           kustomize-version: '4.0.5'
+      - id: docker-cache-key-prefix
+        uses: actions/github-script@v3
+        with:
+          script: return "${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}"
+          result-encoding: string
       - name: Cache Docker layers
         uses: actions/cache@v2
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
+          key: ${{ steps.docker-cache-key-prefix.outputs.result }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-${{ matrix.service-name }}-${{ fromJSON(matrix.build-params).namespace }}-
-            ${{ runner.os }}-buildx-${{ matrix.service-name }}-
+            ${{ steps.docker-cache-key-prefix.outputs.result }}-${{ fromJSON(matrix.build-params).namespace }}-
+            ${{ steps.docker-cache-key-prefix.outputs.result }}-
 
       # Build and push Docker image
       - name: Login to Container Registry
@@ -131,9 +142,6 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       # Build and push Kubernetes manifest
-      - name: Prepare kustomize workspace
-        run: |
-          mkdir /tmp/kustomize
       - uses: actions/checkout@v2
         with:
           repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
