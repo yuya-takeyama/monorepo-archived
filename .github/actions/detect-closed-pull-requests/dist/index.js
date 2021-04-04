@@ -29,7 +29,8 @@ const glob = util_1.promisify(glob_1.default);
 const detectClosedPullRequests = (inputs, ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const prNumbers = yield getExistingPullRequestNumbers(inputs);
     const numbersAndStates = yield getPullRequestNumbersAndStates(inputs, ctx, prNumbers);
-    return numbersAndStates.reduce((acc, prNumberAndState) => {
+    return numbersAndStates
+        .reduce((acc, prNumberAndState) => {
         const [number, state] = prNumberAndState;
         if (state === 'closed') {
             return [...acc, number];
@@ -37,7 +38,8 @@ const detectClosedPullRequests = (inputs, ctx) => __awaiter(void 0, void 0, void
         else {
             return acc;
         }
-    }, []);
+    }, [])
+        .sort((a, b) => a - b);
 });
 exports.detectClosedPullRequests = detectClosedPullRequests;
 const getExistingPullRequestNumbers = (inputs) => __awaiter(void 0, void 0, void 0, function* () {
