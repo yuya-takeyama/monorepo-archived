@@ -85,6 +85,8 @@ jobs:
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
       - uses: docker/setup-buildx-action@v1
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
+        with:
+          buildkitd-flags: --debug
       - uses: imranismail/setup-kustomize@v1
         with:
           kustomize-version: '4.0.5'
