@@ -13,7 +13,7 @@ ARG OVERLAY=develop
 
 RUN yarn build
 
-FROM nginx:1.14
+FROM nginx:1.19
 WORKDIR /app
 COPY --from=builder /app/build .
 ADD nginx /etc/nginx
