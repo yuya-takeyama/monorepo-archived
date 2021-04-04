@@ -20,17 +20,16 @@ export const detectClosedPullRequests = async (
     prNumbers,
   );
 
-  return numbersAndStates.reduce<number[]>(
-    (acc, prNumberAndState): number[] => {
+  return numbersAndStates
+    .reduce<number[]>((acc, prNumberAndState): number[] => {
       const [number, state] = prNumberAndState;
       if (state === 'closed') {
         return [...acc, number];
       } else {
         return acc;
       }
-    },
-    [],
-  );
+    }, [])
+    .sort((a, b) => a - b);
 };
 
 const getExistingPullRequestNumbers = async (
