@@ -27,7 +27,7 @@ jobs:
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - id: detect-closed-pull-requests
         uses: ./.github/actions/detect-closed-pull-requests
-        if: ${{ github.event_name == 'schedule' || github.event_name = 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
         with:
           manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
       - id: result
