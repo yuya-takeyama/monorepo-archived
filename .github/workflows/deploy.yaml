@@ -92,9 +92,10 @@ jobs:
           kustomize-version: '4.0.5'
       - id: docker-cache-key-prefix
         run: echo "::set-output name=result::${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}"
+        if: ${{ fromJSON(needs.setup.outputs.config).docker.use-cache }}
       - name: Cache Docker layers
         uses: actions/cache@v2
-        if: ${{ steps.docker-build-required.outputs.required == 'true' }}
+        if: ${{ steps.docker-build-required.outputs.required == 'true' && fromJSON(needs.setup.outputs.config).docker.use-cache }}
         with:
           path: /tmp/.buildx-cache
           key: ${{ steps.docker-cache-key-prefix.outputs.result }}-${{ fromJSON(matrix.build-params).namespace }}-${{ github.sha }}
@@ -132,7 +133,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
       - name: Move Docker layer cache
-        if: ${{ steps.docker-build-required.outputs.required == 'true' }}
+        if: ${{ steps.docker-build-required.outputs.required == 'true' && fromJSON(needs.setup.outputs.config).docker.use-cache }}
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
