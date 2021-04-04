@@ -26,7 +26,7 @@ jobs:
       - id: load-build-matrix
         uses: ./.github/actions/load-build-matrix
       - id: docker-cache-version
-        run: echo "::set-output name=result::v2"
+        run: echo "::set-output name=result::v4"
 
   push-argocd-app:
     name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
