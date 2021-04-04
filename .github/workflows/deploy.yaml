@@ -110,7 +110,7 @@ jobs:
         with:
           registry: ${{ fromJSON(needs.setup.outputs.config).container-registry.registry }}
           username: ${{ fromJSON(needs.setup.outputs.config).container-registry.username }}
-          password: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY_JSON_KEY }}
+          password: ${{ secrets[fromJSON(needs.setup.outputs.config).container-registry.password-secret] }}
       - id: image-tags
         uses: ./.github/actions/generate-image-tags
         with:

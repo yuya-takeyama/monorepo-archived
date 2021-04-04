@@ -5,6 +5,7 @@ manifest-repository:
 container-registry:
   registry: asia-northeast1-docker.pkg.dev
   username: _json_key
+  password-secret: GOOGLE_ARTIFACT_REGISTRY_JSON_KEY
   image-name-prefix: asia-northeast1-docker.pkg.dev/intense-hour-308116/monorepo/
 docker:
   use-cache: false
