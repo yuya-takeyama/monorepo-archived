@@ -1,4 +1,4 @@
-FROM golang:1.13.6-alpine3.11 as builder
+FROM golang:1.14.15-alpine3.11 as builder
 
 WORKDIR /app
 ADD . /app
