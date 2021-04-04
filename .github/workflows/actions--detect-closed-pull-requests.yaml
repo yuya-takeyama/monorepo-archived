@@ -1,0 +1,44 @@
+name: actions / detect-closed-pull-requests
+
+on:
+  pull_request:
+    branches-ignore:
+      - release
+      - master
+    paths:
+      - .github/actions/detect-closed-pull-requests/**
+      - .github/workflows/actions--detect-closed-pull-requests.yaml
+
+  push:
+    branches:
+      - develop
+      - release
+      - master
+    paths:
+      - .github/actions/detect-closed-pull-requests/**
+      - .github/workflows/actions--detect-closed-pull-requests.yaml
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: config
+        uses: ./.github/actions/config
+      - name: Prepare directories
+        run: |
+          mkdir "${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}"
+          cd "${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}"
+          mkdir -pv applications/staging/pr-101
+          mkdir -pv applications/staging/pr-102
+          mkdir -pv staging/pr-102
+          mkdir -pv staging/pr-103
+      - id: detect-closed-pull-requests
+        uses: ./.github/actions/detect-closed-pull-requests
+        with:
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
+      - run: |
+          echo "Expected: [101,102,103]"
+          echo "Actual: ${{ steps.detect-closed-pull-requests.outputs.pull-request-numbers }}"
+          exit 1
+        if: ${{ steps.detect-closed-pull-requests.outputs.pull-request-numbers != '[101,102,103]' }}

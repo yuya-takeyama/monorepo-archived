@@ -1,0 +1,19 @@
+name: detect-closed-pull-requests
+description: Returns the numbres of closed Pull Requests remaining in the manifest repo
+
+inputs:
+  github-token:
+    description: GitHub API token
+    required: true
+    default: ${{ github.token }}
+  manifest-path:
+    description: Path to store manifests
+    required: true
+
+outputs:
+  pull-request-numbers:
+    description: Numbers of closed Pull Requests (JSON-encoded array)
+
+runs:
+  using: 'node12'
+  main: dist/index.js

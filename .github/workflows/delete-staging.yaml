@@ -4,9 +4,17 @@ on:
   pull_request:
     types: [closed]
 
+  schedule:
+    - cron: '15 * * * *'
+
+  workflow_dispatch:
+
 jobs:
-  delete-staging:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      config: ${{ steps.config.outputs.config }}
+      pull-request-numbers: ${{ steps.result.outputs.result }}
     steps:
       - uses: actions/checkout@v2
       - id: config
@@ -17,15 +25,49 @@ jobs:
           ref: master
           path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
           token: ${{ secrets.BUILD_GITHUB_TOKEN }}
+      - id: detect-closed-pull-requests
+        uses: ./.github/actions/detect-closed-pull-requests
+        if: ${{ github.event_name == 'schedule' || github.event_name = 'workflow_dispatch' }}
+        with:
+          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
+      - id: result
+        uses: actions/github-script@v3
+        with:
+          script: |
+            switch (context.eventName) {
+            case 'pull_request':
+              return [context.payload.pull_request.number];
+            case 'schedule':
+            case 'workflow_dispatch':
+              return JSON.parse('${{ steps.detect-closed-pull-requests.outputs.pull-request-numbers }}');
+
+            default:
+              throw new Error(`Invalid eventName: ${context.eventName}`);
+            }
+
+  delete-staging:
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        pull-request-number: ${{ fromJSON(needs.setup.outputs.pull-request-numbers) }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout }}
+          ref: master
+          path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
+          token: ${{ secrets.BUILD_GITHUB_TOKEN }}
       - run: |
-          cd "${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}"
-          pr_number="${{ github.event.number }}"
+          cd "${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}"
+          pr_number="${{ matrix.pull-request-number }}"
           rm -rf "applications/staging/pr-${pr_number}"
           rm -rf "staging/pr-${pr_number}"
       - uses: ./.github/actions/push-to-manifest-repo
         with:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
-          manifest-path: ${{ fromJSON(steps.config.outputs.config).manifest-repository.checkout-path }}
+          manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           branch-prefix: delete-staging
           commit-message: Remove staging pr-${{ github.event.number }}
           pull-request-title: Remove staging pr-${{ github.event.number }}
