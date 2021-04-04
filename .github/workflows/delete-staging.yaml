@@ -69,6 +69,6 @@ jobs:
           github-token: ${{ secrets.BUILD_GITHUB_TOKEN }}
           manifest-path: ${{ fromJSON(needs.setup.outputs.config).manifest-repository.checkout-path }}
           branch-prefix: delete-staging
-          commit-message: Remove staging pr-${{ github.event.number }}
-          pull-request-title: Remove staging pr-${{ github.event.number }}
-          pull-request-body: https://github.com/${{ github.repository }}/pull/${{ github.event.number }} has been closed.
+          commit-message: Remove staging pr-${{ matrix.pull-request-number }}
+          pull-request-title: Remove staging pr-${{ matrix.pull-request-number }}
+          pull-request-body: https://github.com/${{ github.repository }}/pull/${{ matrix.pull-request-number }} has been closed.
