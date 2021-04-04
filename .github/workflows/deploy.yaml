@@ -26,10 +26,7 @@ jobs:
       - id: load-build-matrix
         uses: ./.github/actions/load-build-matrix
       - id: docker-cache-version
-        uses: actions/github-script@v3
-        with:
-          script: return "v2"
-          result-encoding: string
+        run: echo "::set-output name=result::v4"
 
   push-argocd-app:
     name: 'push-argocd-app / ${{ fromJSON(matrix.build-params).overlay }}'
@@ -92,10 +89,7 @@ jobs:
         with:
           kustomize-version: '4.0.5'
       - id: docker-cache-key-prefix
-        uses: actions/github-script@v3
-        with:
-          script: return "${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}"
-          result-encoding: string
+        run: echo "::set-output name=result::${{ needs.setup.outputs.docker-cache-version }}-${{ runner.os }}-buildx-${{ matrix.service-name }}"
       - name: Cache Docker layers
         uses: actions/cache@v2
         if: ${{ steps.docker-build-required.outputs.required == 'true' }}
